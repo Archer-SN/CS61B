@@ -30,7 +30,7 @@ public class Body {
 	/** Calculates distance between two celestial objects
 	 * We break the distance into x and y
 	 * We then use the formula r = sqrt(x^2 + y^2) to find the distance
-	*/
+	 */
 	public double calcDistance(Body b) {
 		Double xDistance = b.xxPos - xxPos;
 		Double yDistance = b.yyPos - yyPos;
@@ -45,9 +45,9 @@ public class Body {
 		return force;  
 	}
 
-	/*	Calculates the Force exerted by b on the x component
-		Fx = Fcosθ -> Fx = F(dx/r)
-	*/
+	/**	Calculates the Force exerted by b on the x component
+	 * Fx = Fcosθ -> Fx = F(dx/r)
+	 */
 	public double calcForceExertedByX(Body b) {
 		double force = calcForceExertedBy(b);
 		double xDistance = b.xxPos - xxPos;
@@ -57,9 +57,9 @@ public class Body {
 		return force * xDistance / distance;
 	}
 
-	/*	Calculates the Force exerted by b on the y component
-		Fy = Fsinθ -> Fy = F(dy/r)
-	*/
+	/**	Calculates the Force exerted by b on the y component
+	 * Fy = Fsinθ -> Fy = F(dy/r)
+	 */
 	public double calcForceExertedByY(Body b) {
 		double force = calcForceExertedBy(b);
 		double yDistance = b.yyPos - yyPos;
@@ -67,5 +67,44 @@ public class Body {
 
 		// Returns Force in the x direction
 		return force * yDistance / distance;
+	}
+
+	/** Calculates the net force on the x direction acting upon this body */
+	public double calcNetForceExertedByX(Body[] bodies) {
+		double netForceX = 0;
+		for (Body b : bodies) {
+			if (!this.equals(b)) {
+				netForceX = netForceX + calcForceExertedByX(b);
+			}
+		}
+		return netForceX;
+	}
+
+	/** Calculates the net force on the y direction acting upon this body */
+	public double calcNetForceExertedByY(Body[] bodies) {
+		double netForceY = 0;
+		for (Body b : bodies) {
+			if (!this.equals(b)) {
+				netForceY = netForceY + calcForceExertedByY(b);
+			}
+		}
+		return netForceY;
+	}
+
+	public void update(double dt, double fX, double fY) {
+		double aX = fX / mass;
+		double aY = fY / mass;
+
+		// Updates the current body's velocity
+		xxVel = xxVel + aX * dt;
+		yyVel = yyVel + aY * dt;
+
+		// Updates the current body's position
+		xxPos = xxPos + xxVel * dt;
+		yyPos = yyPos + yyVel * dt;
+	}
+
+	public void draw() {
+		StdDraw.picture(xxPos, yyPos, "images/" + imgFileName);
 	}
 }
