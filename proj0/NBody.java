@@ -1,7 +1,7 @@
 public class NBody {
 	/** Reads the radius of the universe from a file
 	 * @return radius 
-	 */java NBody 157788000.0 25000.0 data/planets.txt
+	 */
 
 	public static double readRadius(String filename) {
 		In in = new In(filename);
