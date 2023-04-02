@@ -14,7 +14,7 @@ public class NBody {
 	/** Extracts data from a file and turns it into bodies 
 	 * @return list of bodies
 	 */
-	public static Planet[] readBodies(String filename) {
+	public static Planet[] readPlanets(String filename) {
 		In in = new In(filename);
 		int numberOfBodies = in.readInt();
 		Planet[] bodies = new Planet[numberOfBodies];
@@ -36,7 +36,7 @@ public class NBody {
 		return bodies;
 	}
 
-	public static void drawBodies(Planet[] bodies) {
+	public static void drawPlanets(Planet[] bodies) {
 		for (Planet b : bodies) {
 			b.draw();
 		}
@@ -50,7 +50,7 @@ public class NBody {
 		Double dt = Double.parseDouble(args[1]);
 		String filename = args[2];
 		double radius = readRadius(filename);
-		Planet[] allBodies = readBodies(filename);
+		Planet[] allBodies = readPlanets(filename);
 
 		// Time elapsed in the universe
 		double time = 0;
@@ -79,7 +79,7 @@ public class NBody {
 			StdDraw.picture(0, 0, "images/starfield.jpg");
 
 			// Draws all the bodies
-			drawBodies(allBodies);
+			drawPlanets(allBodies);
 
 			// Show the pictures
 			StdDraw.show();
