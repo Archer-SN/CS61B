@@ -1,7 +1,8 @@
 public class NBody {
 	/** Reads the radius of the universe from a file
 	 * @return radius 
-	 */
+	 */java NBody 157788000.0 25000.0 data/planets.txt
+
 	public static double readRadius(String filename) {
 		In in = new In(filename);
 		//Skips the first value which is the number of bodies
@@ -13,10 +14,10 @@ public class NBody {
 	/** Extracts data from a file and turns it into bodies 
 	 * @return list of bodies
 	 */
-	public static Body[] readBodies(String filename) {
+	public static Planet[] readBodies(String filename) {
 		In in = new In(filename);
 		int numberOfBodies = in.readInt();
-		Body[] bodies = new Body[numberOfBodies];
+		Planet[] bodies = new Planet[numberOfBodies];
 
 		// Skips the second value which is the radius
 		in.readDouble();
@@ -29,14 +30,14 @@ public class NBody {
 			double yyVel = in.readDouble();
 			double mass = in.readDouble();
 			String imgFileName = in.readString();
-			bodies[i] = new Body(xxPos, yyPos, xxVel, yyVel, mass, imgFileName);
+			bodies[i] = new Planet(xxPos, yyPos, xxVel, yyVel, mass, imgFileName);
 		}
 
 		return bodies;
 	}
 
-	public static void drawBodies(Body[] bodies) {
-		for (Body b : bodies) {
+	public static void drawBodies(Planet[] bodies) {
+		for (Planet b : bodies) {
 			b.draw();
 		}
 	}
@@ -49,7 +50,7 @@ public class NBody {
 		Double dt = Double.parseDouble(args[1]);
 		String filename = args[2];
 		double radius = readRadius(filename);
-		Body[] allBodies = readBodies(filename); 
+		Planet[] allBodies = readBodies(filename);
 
 		// Time elapsed in the universe
 		double time = 0;
@@ -64,13 +65,13 @@ public class NBody {
 			Double[] yForces = new Double[allBodies.length];
 
 			for (int i = 0; i < allBodies.length; i++) {
-				Body currentBody = allBodies[i];
+				Planet currentBody = allBodies[i];
 				xForces[i] = currentBody.calcNetForceExertedByX(allBodies);
 				yForces[i] = currentBody.calcNetForceExertedByY(allBodies);
 			}
 
 			for (int i = 0; i < allBodies.length; i++) {
-				Body currentBody = allBodies[i];
+				Planet currentBody = allBodies[i];
 				currentBody.update(dt, xForces[i], yForces[i]);
 			}
 

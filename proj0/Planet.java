@@ -1,4 +1,4 @@
-public class Body {
+public class Planet {
 	public double xxPos;
 	public double yyPos;
 	public double xxVel;
@@ -8,8 +8,8 @@ public class Body {
 
 	public static double G = 6.67e-11;
 	
-	public Body(double xP, double yP, double xV,
-              double yV, double m, String img) {
+	public Planet(double xP, double yP, double xV,
+				  double yV, double m, String img) {
 		xxPos = xP;
 		yyPos = yP;
 		xxVel = xV;
@@ -18,7 +18,7 @@ public class Body {
 		imgFileName = img;
 	}
 
-	public Body(Body b) {
+	public Planet(Planet b) {
 		xxPos = b.xxPos;
 		yyPos = b.yyPos;
 		xxVel = b.xxVel;
@@ -31,14 +31,14 @@ public class Body {
 	 * We break the distance into x and y
 	 * We then use the formula r = sqrt(x^2 + y^2) to find the distance
 	 */
-	public double calcDistance(Body b) {
+	public double calcDistance(Planet b) {
 		Double xDistance = b.xxPos - xxPos;
 		Double yDistance = b.yyPos - yyPos;
 
 		return Math.sqrt(Math.pow(xDistance, 2) + Math.pow(yDistance, 2));
 	}
 
-	public double calcForceExertedBy(Body b) {
+	public double calcForceExertedBy(Planet b) {
 		double r = calcDistance(b);
 		double force = G * mass * b.mass / Math.pow(r, 2);
 
@@ -48,7 +48,7 @@ public class Body {
 	/**	Calculates the Force exerted by b on the x component
 	 * Fx = Fcosθ -> Fx = F(dx/r)
 	 */
-	public double calcForceExertedByX(Body b) {
+	public double calcForceExertedByX(Planet b) {
 		double force = calcForceExertedBy(b);
 		double xDistance = b.xxPos - xxPos;
 		double distance = calcDistance(b);
@@ -60,7 +60,7 @@ public class Body {
 	/**	Calculates the Force exerted by b on the y component
 	 * Fy = Fsinθ -> Fy = F(dy/r)
 	 */
-	public double calcForceExertedByY(Body b) {
+	public double calcForceExertedByY(Planet b) {
 		double force = calcForceExertedBy(b);
 		double yDistance = b.yyPos - yyPos;
 		double distance = calcDistance(b);
@@ -70,9 +70,9 @@ public class Body {
 	}
 
 	/** Calculates the net force on the x direction acting upon this body */
-	public double calcNetForceExertedByX(Body[] bodies) {
+	public double calcNetForceExertedByX(Planet[] bodies) {
 		double netForceX = 0;
-		for (Body b : bodies) {
+		for (Planet b : bodies) {
 			if (!this.equals(b)) {
 				netForceX = netForceX + calcForceExertedByX(b);
 			}
@@ -81,9 +81,9 @@ public class Body {
 	}
 
 	/** Calculates the net force on the y direction acting upon this body */
-	public double calcNetForceExertedByY(Body[] bodies) {
+	public double calcNetForceExertedByY(Planet[] bodies) {
 		double netForceY = 0;
-		for (Body b : bodies) {
+		for (Planet b : bodies) {
 			if (!this.equals(b)) {
 				netForceY = netForceY + calcForceExertedByY(b);
 			}
