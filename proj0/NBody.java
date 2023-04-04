@@ -36,7 +36,7 @@ public class NBody {
 		return bodies;
 	}
 
-	public static void drawPlanets(Planet[] bodies) {
+	private static void drawPlanets(Planet[] bodies) {
 		for (Planet b : bodies) {
 			b.draw();
 		}
