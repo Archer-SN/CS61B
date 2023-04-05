@@ -1,6 +1,3 @@
-//**** NOTE
-// ONE LAST THING TO DO IS TO HANDLE THE CASE OF AN EMPTY ARRAY
-
 
 /* A circular array class */
 public class ArrayDeque<T> {
