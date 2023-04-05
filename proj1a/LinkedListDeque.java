@@ -1,8 +1,8 @@
 public class LinkedListDeque<T> {
     private class ItemNode {
-        public T item;
-        public ItemNode prev;
-        public ItemNode next;
+        private T item;
+        private ItemNode prev;
+        private ItemNode next;
 
         public ItemNode(T itemValue, ItemNode pNode, ItemNode nNode) {
             item = itemValue;
@@ -106,6 +106,19 @@ public class LinkedListDeque<T> {
             p = p.next;
         }
         return p.item;
+    }
+
+    public T getRecursiveHelper(int index, ItemNode node) {
+        if (index == 0) {
+            return node.item;
+        }
+        return getRecursiveHelper(index - 1, node.next);
+    }
+    public T getRecursive(int index) {
+        if (index >= size) {
+            return null;
+        }
+        return getRecursiveHelper(index, sentinel.next);
     }
 
 }
