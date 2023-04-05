@@ -115,9 +115,10 @@ public class ArrayDeque<T> {
         if (index >= size()) {
             return null;
         }
-        if (index >= firstSize) {
-            return items[items.length - 1 - (index - currentFirst())];
-        } else {
+        else if (index >= firstSize) {
+            return items[items.length - 1 - (index - firstSize - 1)];
+        }
+        else {
             // Our first element is the righter most element
             return items[currentFirst() - index];
         }
