@@ -24,6 +24,9 @@ public class ArrayDeque<T> {
         items = (T[]) new Object[defaultSize];
         nextFirst = 0;
         nextLast = defaultSize - 1;
+
+        firstSize = 0;
+        lastSize = 0;
     }
 
     /** Create a new array with all the elements in the other array */
@@ -100,7 +103,7 @@ public class ArrayDeque<T> {
     }
 
     public T removeFirst() {
-        if (isEmpty()) {
+        if (firstSize == 0) {
             return null;
         }
         T item = items[currentFirst()];
@@ -117,7 +120,7 @@ public class ArrayDeque<T> {
     }
 
     public T removeLast() {
-        if (isEmpty()) {
+        if (lastSize == 0) {
             return null;
         }
         T item = items[currentLast()];
