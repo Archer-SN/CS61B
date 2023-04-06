@@ -136,14 +136,25 @@ public class ArrayDeque<T> {
         return item;
     }
 
+    private int toArrayDequeIndex(int index) {
+        if (index >= firstSize) {
+            // The AD index is equal to
+            return items.length - 1 - (index - firstSize - 1);
+        }
+        else {
+            return currentFirst() - index;
+        }
+    }
+
     public T get(int index) {
-        if (index >= size()) {
+        int adIndex = toArrayDequeIndex(index);
+        if (index >= items.length) {
             return null;
         } else if (index >= firstSize) {
-            return items[items.length - 1 - (index - firstSize - 1)];
+            return items[adIndex];
         } else {
             // Our first element is the righter most element
-            return items[currentFirst() - index];
+            return items[adIndex];
         }
     }
 }
