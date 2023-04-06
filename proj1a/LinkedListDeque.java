@@ -111,11 +111,11 @@ public class LinkedListDeque<T> {
     }
 
     public T get(int index) {
-        if (index + 1 > size) {
+        if (index >= size) {
             return null;
         }
 
-        ItemNode p = sentinel;
+        ItemNode p = sentinel.next;
         while (index != 0) {
             index -= 1;
             p = p.next;

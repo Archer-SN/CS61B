@@ -2,7 +2,7 @@
 /* A circular array class */
 public class ArrayDeque<T> {
     private int defaultSize = 8;
-    private int sizeMultiplier = 2;
+    private int defaultFactor = 2;
 
     /* Size of first and second half of the array */
     private int firstSize = 0;
@@ -47,8 +47,8 @@ public class ArrayDeque<T> {
     /** Creates a new array with larger size with all the previous elements in it
      *  The array is expanded at the middle
      */
-    private void resize() {
-        int newSize = size() * sizeMultiplier;
+    private void resize(float factor) {
+        int newSize = Math.round(size() * factor);
         T[] newItems = (T[]) new Object[newSize];
 
         /* Copies the first half the array
@@ -65,7 +65,7 @@ public class ArrayDeque<T> {
 
     public void addFirst(T item) {
         if (size() >= items.length) {
-            resize();
+            resize(defaultFactor);
         }
 
         items[nextFirst] = item;
@@ -76,7 +76,7 @@ public class ArrayDeque<T> {
 
     public void addLast(T item) {
         if (size() >= items.length) {
-            resize();
+            resize(defaultFactor);
         }
         items[nextLast] = item;
 
@@ -100,16 +100,36 @@ public class ArrayDeque<T> {
     }
 
     public T removeFirst() {
+        if (isEmpty()) {
+            return null;
+        }
         T item = items[currentFirst()];
         items[currentFirst()] = null;
+        firstSize -= 1;
         nextFirst -= 1;
+
+        // If the array usage is small, we resize the array to save space
+        if (size() < items.length * 0.25) {
+            resize(0.25F);
+        }
+
         return item;
     }
 
     public T removeLast() {
+        if (isEmpty()) {
+            return null;
+        }
         T item = items[currentLast()];
         items[currentLast()] = null;
         nextLast += 1;
+        lastSize -= 1;
+
+        // If the array usage is small, we resize the array to save space
+        if (size() < items.length * 0.25) {
+            resize(0.25F);
+        }
+
         return item;
     }
 
