@@ -1,6 +1,5 @@
 /** Performs some basic linked list tests. */
 public class LinkedListDequeTest {
-	
 	/* Utility method for printing out empty checks. */
 	public static boolean checkEmpty(boolean expected, boolean actual) {
 		if (expected != actual) {
@@ -79,9 +78,39 @@ public class LinkedListDequeTest {
 
 	}
 
+	public static void addFirstRemoveLastTest() {
+		System.out.println("Running add first/remove last test");
+		LinkedListDeque<Integer> lld1 = new LinkedListDeque<>();
+		lld1.addFirst(1);
+		lld1.addFirst(2);
+		lld1.addFirst(3);
+		int removedValue = lld1.removeLast();
+		boolean passed = removedValue == 1;
+		printTestStatus(passed);
+		if (!passed) {
+			System.out.println("Expected 1 but returned " + removedValue);
+		}
+	}
+
+	public static void addLastRemoveFirst() {
+		System.out.println("Running add last/remove first test");
+		LinkedListDeque<Integer> lld1 = new LinkedListDeque<>();
+		lld1.addLast(1);
+		lld1.addLast(2);
+		lld1.addLast(3);
+		int removedValue = lld1.removeFirst();
+		boolean passed = removedValue == 1 && lld1.get(0) == 2;
+		printTestStatus(passed);
+		if (!passed) {
+			System.out.println("Expected 1 but returned " + removedValue);
+		}
+	}
+
 	public static void main(String[] args) {
 		System.out.println("Running tests.\n");
 		addIsEmptySizeTest();
 		addRemoveTest();
+		addFirstRemoveLastTest();
+		addLastRemoveFirst();
 	}
-} 
+}

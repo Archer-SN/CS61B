@@ -27,10 +27,12 @@ public class LinkedListDeque<T> {
     }
 
     /** Creates a new doubly linked list with one node attached to the sentinel*/
+    /* Gradescope somehow wants me to remove this
     public LinkedListDeque(T item) {
         size = 1;
         sentinel = new ItemNode();
         sentinel.next = new ItemNode(item, sentinel, sentinel);
+        sentinel.prev = sentinel.next;
     }
 
     public LinkedListDeque(LinkedListDeque other) {
@@ -41,15 +43,24 @@ public class LinkedListDeque<T> {
             addLast(p.item);
         }
     }
+    */
 
     public void addFirst(T item) {
         size += 1;
-        sentinel.next = new ItemNode(item, sentinel, sentinel.next);
+        ItemNode newNode = new ItemNode(item, sentinel, sentinel.next);
+        // Points the second node's previous node to the first node
+        sentinel.next.prev = newNode;
+        // Points to the new first node
+        sentinel.next = newNode;
     }
 
     public void addLast(T item) {
         size += 1;
-        sentinel.prev = new ItemNode(item, sentinel.prev, sentinel);
+        ItemNode newNode = new ItemNode(item, sentinel.prev, sentinel);
+        // Points the second last to the last node
+        sentinel.prev.next = newNode;
+        // Points sentinel's prev to the new last node
+        sentinel.prev = newNode;
     }
 
     /** Checks if the linked list is empty
@@ -79,6 +90,7 @@ public class LinkedListDeque<T> {
             size -= 1;
             T firstItem = sentinel.next.item;
             sentinel.next = sentinel.next.next;
+            sentinel.next.prev = sentinel;
             return firstItem;
         }
         return null;
@@ -89,7 +101,10 @@ public class LinkedListDeque<T> {
         if (size > 0) {
             size -= 1;
             T lastItem = sentinel.prev.item;
+            // Pointing the arrow to the second last node
             sentinel.prev = sentinel.prev.prev;
+            // Remove the pointer of the second node on the last node
+            sentinel.prev.next = sentinel;
             return lastItem;
         }
         return null;
@@ -108,12 +123,16 @@ public class LinkedListDeque<T> {
         return p.item;
     }
 
-    public T getRecursiveHelper(int index, ItemNode node) {
+    private T getRecursiveHelper(int index, ItemNode node) {
         if (index == 0) {
             return node.item;
         }
         return getRecursiveHelper(index - 1, node.next);
+
     }
+
+    /* Given index, gets an item recursively
+    */
     public T getRecursive(int index) {
         if (index >= size) {
             return null;

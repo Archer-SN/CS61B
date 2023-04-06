@@ -13,11 +13,11 @@ public class ArrayDeque<T> {
     private int nextLast;
 
     /** Creates an array with specified size */
-    public ArrayDeque(int arraySize) {
+    /*public ArrayDeque(int arraySize) {
         items = (T[]) new Object[arraySize];
         nextFirst = 0;
         nextLast = arraySize - 1;
-    }
+    }*/
 
     /** Creates an array with default size */
     public ArrayDeque() {
@@ -27,12 +27,14 @@ public class ArrayDeque<T> {
     }
 
     /** Create a new array with all the elements in the other array */
+    /*
     public ArrayDeque(ArrayDeque other) {
         items = (T[]) new Object[other.size()];
         System.arraycopy(other, 0, items, 0, other.size());
         nextFirst = other.nextFirst;
         nextLast = other.nextLast;
     }
+    */
 
     private int currentFirst() {
         return nextFirst - 1;
@@ -114,11 +116,9 @@ public class ArrayDeque<T> {
     public T get(int index) {
         if (index >= size()) {
             return null;
-        }
-        else if (index >= firstSize) {
+        } else if (index >= firstSize) {
             return items[items.length - 1 - (index - firstSize - 1)];
-        }
-        else {
+        } else {
             // Our first element is the righter most element
             return items[currentFirst() - index];
         }
