@@ -29,18 +29,24 @@ public class ArrayDequeTest {
         ad.printDeque();
     }
 
-    public static void randomTest() {
+    public static void randomTest1() {
         ArrayDeque<Integer> ad = new ArrayDeque<>();
         ad.addFirst(0);
         ad.addFirst(1);
         ad.removeFirst();
     }
 
+    public static void randomTest2() {
+        ArrayDeque<Integer> ad = new ArrayDeque<>();
+        ad.isEmpty();
+        for (int i = 1; i <= 5; i++) {
+            ad.addFirst(i);
+        }
+        ad.removeLast();
+    }
+
 
     public static void main(String[] args) {
-        addGetTest();
-        addFirstAddLastTest();
-        resizeTest();
-        randomTest();
+        randomTest2();
     }
 }
