@@ -125,6 +125,9 @@ public class ArrayDeque<T> {
      * Changes the nextFirst index
      * Resizes the array if the array usage is less than 25% */
     public T removeFirst() {
+        if (size() <= 0) {
+            return null;
+        }
         T item = items[currentFirst()];
         items[currentFirst()] = null;
         firstSize -= 1;
@@ -141,6 +144,9 @@ public class ArrayDeque<T> {
     /* Removes the last element from the array
      * Resizes the array if the usage is less than 25% */
     public T removeLast() {
+        if (size() <= 0) {
+            return null;
+        }
         T item = items[currentLast()];
         items[currentLast()] = null;
         nextLast += 1;
