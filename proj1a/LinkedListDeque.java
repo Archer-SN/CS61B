@@ -10,7 +10,9 @@ public class LinkedListDeque<T> {
             next = nNode;
         }
 
-        /** Used to create a sentinel node*/
+        /**
+         * Used to create a sentinel node
+         */
         public ItemNode() {
             this.prev = this;
             this.next = this;
@@ -20,13 +22,17 @@ public class LinkedListDeque<T> {
     private ItemNode sentinel;
     private int size;
 
-    /** Creates an empty doubly linked list if no parameter is given*/
+    /**
+     * Creates an empty doubly linked list if no parameter is given
+     */
     public LinkedListDeque() {
         size = 0;
         sentinel = new ItemNode();
     }
 
-    /** Creates a new doubly linked list with one node attached to the sentinel*/
+    /**
+     * Creates a new doubly linked list with one node attached to the sentinel
+     */
     /* Gradescope somehow wants me to remove this
     public LinkedListDeque(T item) {
         size = 1;
@@ -44,7 +50,6 @@ public class LinkedListDeque<T> {
         }
     }
     */
-
     public void addFirst(T item) {
         size += 1;
         ItemNode newNode = new ItemNode(item, sentinel, sentinel.next);
@@ -63,9 +68,11 @@ public class LinkedListDeque<T> {
         sentinel.prev = newNode;
     }
 
-    /** Checks if the linked list is empty
+    /**
+     * Checks if the linked list is empty
+     *
      * @return boolean
-     * */
+     */
     public boolean isEmpty() {
         return size == 0;
     }
@@ -74,7 +81,9 @@ public class LinkedListDeque<T> {
         return size;
     }
 
-    /** Prints all them items in deque from first to last, separated by a space*/
+    /**
+     * Prints all them items in deque from first to last, separated by a space
+     */
     public void printDeque() {
         ItemNode p = sentinel;
         while (p.next != sentinel) {
@@ -84,7 +93,9 @@ public class LinkedListDeque<T> {
         System.out.println();
     }
 
-    /** Removes and returns the first item on the Linked List*/
+    /**
+     * Removes and returns the first item on the Linked List
+     */
     public T removeFirst() {
         if (size > 0) {
             size -= 1;
@@ -96,7 +107,9 @@ public class LinkedListDeque<T> {
         return null;
     }
 
-    /** Removes and returns the last item on the Linked List*/
+    /**
+     * Removes and returns the last item on the Linked List
+     */
     public T removeLast() {
         if (size > 0) {
             size -= 1;
@@ -132,7 +145,7 @@ public class LinkedListDeque<T> {
     }
 
     /* Given index, gets an item recursively
-    */
+     */
     public T getRecursive(int index) {
         if (index >= size) {
             return null;

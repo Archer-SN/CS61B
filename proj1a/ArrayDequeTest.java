@@ -19,9 +19,14 @@ public class ArrayDequeTest {
 
     public static void resizeTest() {
         ArrayDeque<Integer> ad = new ArrayDeque<>();
-        for (int i = 0; i < 9; i++) {
+        for (int i = 0; i < 6; i++) {
             ad.addFirst(1);
         }
+        ad.addLast(2);
+        ad.addLast(2);
+        ad.addLast(3);
+
+        ad.printDeque();
     }
 
 
