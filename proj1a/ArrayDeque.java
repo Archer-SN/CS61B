@@ -128,7 +128,7 @@ public class ArrayDeque<T> {
         nextFirst -= 1;
 
         // If the array usage is small, we resize the array to save space
-        if (size() < items.length * 0.25) {
+        if (size() > 8 && size() < items.length * 0.25) {
             resize(0.25F);
         }
 
@@ -147,7 +147,7 @@ public class ArrayDeque<T> {
         lastSize -= 1;
 
         // If the array usage is small, we resize the array to save space
-        if (size() < items.length * 0.25) {
+        if (size() > 8 && size() < items.length * 0.25) {
             resize(0.25F);
         }
 

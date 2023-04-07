@@ -29,10 +29,18 @@ public class ArrayDequeTest {
         ad.printDeque();
     }
 
+    public static void randomTest() {
+        ArrayDeque<Integer> ad = new ArrayDeque<>();
+        ad.addFirst(0);
+        ad.addFirst(1);
+        ad.removeFirst();
+    }
+
 
     public static void main(String[] args) {
         addGetTest();
         addFirstAddLastTest();
         resizeTest();
+        randomTest();
     }
 }
