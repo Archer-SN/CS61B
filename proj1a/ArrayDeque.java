@@ -15,16 +15,7 @@ public class ArrayDeque<T> {
     private int nextFirst;
     private int nextLast;
 
-    /** Creates an array with specified size */
-    /*public ArrayDeque(int arraySize) {
-        items = (T[]) new Object[arraySize];
-        nextFirst = 0;
-        nextLast = arraySize - 1;
-    }*/
 
-    /**
-     * Creates an array with default size
-     */
     public ArrayDeque() {
         items = (T[]) new Object[defaultSize];
         nextFirst = 0;
@@ -34,29 +25,95 @@ public class ArrayDeque<T> {
         lastSize = 0;
     }
 
-    /**
-     * Create a new array with all the elements in the other array
-     */
-    /*
-    public ArrayDeque(ArrayDeque other) {
-        items = (T[]) new Object[other.size()];
-        System.arraycopy(other, 0, items, 0, other.size());
-        nextFirst = other.nextFirst;
-        nextLast = other.nextLast;
-    }
-    */
+
+    /* Returns the index of the first item in the array */
     private int currentFirst() {
         if (firstSize == 0) {
-            return items.length - 1;
+            return nextLast + lastSize;
         }
         return nextFirst - 1;
     }
 
+    /* Returns the index of the last item in the array */
     private int currentLast() {
         if (lastSize == 0) {
-            return 0;
+            return nextFirst - firstSize;
         }
         return nextLast + 1;
+    }
+
+    /* Decreases firstSize when called
+     * Handles the case where the next index is unbound */
+    private void decreaseFirstSize() {
+        if (firstSize > 0) {
+            firstSize -= 1;
+            nextFirst -= 1;
+        } else {
+            lastSize -= 1;
+            nextFirst = currentFirst() + 1;
+        }
+    }
+
+    /* Decreases lastSize when called
+     *  Handles the case where the next index is unbound */
+    private void decreaseLastSize() {
+        if (lastSize > 0) {
+            lastSize -= 1;
+            nextLast += 1;
+        } else {
+            firstSize -= 1;
+            nextLast = currentLast() - 1;
+        }
+    }
+
+    /* Increase firstSize when called and also changes the nextFirst index */
+    private void increaseFirstSize() {
+        if (nextFirst >= items.length) {
+            nextFirst = 0;
+        } else {
+            nextFirst += 1;
+        }
+        firstSize += 1;
+    }
+
+    /* Increase lastSize when called and also changes the nextLast index */
+    private void increaseLastSize() {
+        if (nextLast < 0) {
+            nextLast = items.length - 1;
+        } else {
+            nextLast -= 1;
+        }
+        lastSize += 1;
+    }
+
+    /* Gets all the items in the first half of the array */
+    private T[] getFirstItems() {
+        int fSize = firstSize;
+        int index = currentFirst();
+        T[] firstItems = (T[]) new Object[firstSize];
+        for (int i = 0; i < firstSize; i++) {
+            if (index < 0) {
+                index = items.length - 1;
+            }
+            firstItems[i] = items[index];
+            index -= 1;
+        }
+        return firstItems;
+    }
+
+    /* Gets all the items in the last half of the array */
+    private T[] getLastItems() {
+        int lSize = lastSize;
+        int index = currentFirst();
+        T[] lastItems = (T[]) new Object[firstSize];
+        for (int i = 0; i < lastSize; i++) {
+            if (index >= items.length) {
+                index = 0;
+            }
+            lastItems[i] = items[index];
+            index += 1;
+        }
+        return lastItems;
     }
 
     /**
@@ -66,16 +123,11 @@ public class ArrayDeque<T> {
     private void resize(float factor) {
         int newSize = Math.round(size() * factor);
         T[] newItems = (T[]) new Object[newSize];
+        T[] firstItems = getFirstItems();
+        T[] lastItems = getLastItems();
 
-        /* Copies the first half the array
-           The first half doesn't move so no index change
-         */
-        System.arraycopy(items, 0, newItems, 0, firstSize);
-        /* Copies the last half of the array
-           The last half is moved thus the index changes
-           newSize - lastSize is equal to the index of the first element in the last half
-         */
-        System.arraycopy(items, currentLast(), newItems, newSize - lastSize, lastSize);
+        System.arraycopy(firstItems, 0, newItems, 0, firstSize);
+        System.arraycopy(lastItems, 0, newItems, newSize - lastSize, lastSize);
         nextLast = newSize - lastSize - 1;
         items = newItems;
     }
@@ -88,8 +140,7 @@ public class ArrayDeque<T> {
 
         items[nextFirst] = item;
 
-        firstSize += 1;
-        nextFirst += 1;
+        increaseFirstSize();
     }
 
     /* Adds an item to the left of the previous last item */
@@ -99,8 +150,7 @@ public class ArrayDeque<T> {
         }
         items[nextLast] = item;
 
-        lastSize += 1;
-        nextLast -= 1;
+        increaseLastSize();
     }
 
     /* Checks if the array is empty */
@@ -130,8 +180,7 @@ public class ArrayDeque<T> {
         }
         T item = items[currentFirst()];
         items[currentFirst()] = null;
-        firstSize -= 1;
-        nextFirst -= 1;
+        decreaseFirstSize();
 
         // If the array usage is small, we resize the array to save space
         if (size() > 8 && size() < items.length * 0.25) {
@@ -149,8 +198,7 @@ public class ArrayDeque<T> {
         }
         T item = items[currentLast()];
         items[currentLast()] = null;
-        nextLast += 1;
-        lastSize -= 1;
+        decreaseLastSize();
 
         // If the array usage is small, we resize the array to save space
         if (size() > 8 && size() < items.length * 0.25) {

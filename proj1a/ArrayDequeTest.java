@@ -45,8 +45,28 @@ public class ArrayDequeTest {
         ad.removeLast();
     }
 
+    public static void randomTest3() {
+        ArrayDeque<Integer> ad = new ArrayDeque<>();
+        ad.addFirst(0);
+        ad.removeFirst();
+        ad.addFirst(2);
+        ad.removeFirst();
+        ad.addLast(4);
+        ad.addFirst(5);
+        ad.removeFirst();
+        ad.addLast(7);
+        ad.addFirst(8);
+        ad.addLast(9);
+        ad.get(3);
+        ad.removeFirst();
+        ad.removeFirst();
+        ad.removeLast();
+        ad.removeFirst();
+    }
+
 
     public static void main(String[] args) {
         randomTest2();
+        randomTest3();
     }
 }
