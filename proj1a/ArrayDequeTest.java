@@ -80,10 +80,22 @@ public class ArrayDequeTest {
         ad.addFirst(11);
     }
 
+    private static void randomTest5() {
+        ArrayDeque<Integer> ad = new ArrayDeque<>();
+        ad.addLast(0);
+        ad.removeFirst();
+        ad.size();
+        ad.addLast(3);
+        ad.removeLast();
+        ad.addFirst(5);
+        ad.addFirst(6);
+    }
+
 
     public static void main(String[] args) {
         randomTest2();
         randomTest3();
         randomTest4();
+        randomTest5();
     }
 }

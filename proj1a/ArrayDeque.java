@@ -68,22 +68,20 @@ public class ArrayDeque<T> {
 
     /* Increase firstSize when called and also changes the nextFirst index */
     private void increaseFirstSize() {
+        nextFirst += 1;
+        firstSize += 1;
         if (nextFirst >= items.length) {
             nextFirst = 0;
-        } else {
-            nextFirst += 1;
         }
-        firstSize += 1;
     }
 
     /* Increase lastSize when called and also changes the nextLast index */
     private void increaseLastSize() {
+        nextLast -= 1;
+        lastSize += 1;
         if (nextLast < 0) {
             nextLast = items.length - 1;
-        } else {
-            nextLast -= 1;
         }
-        lastSize += 1;
     }
 
     /* Gets all the items in the first half of the array */
