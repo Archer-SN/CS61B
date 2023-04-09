@@ -91,6 +91,16 @@ public class ArrayDequeTest {
         ad.addFirst(6);
     }
 
+    private static void randomTest6() {
+        ArrayDeque<Integer> ad = new ArrayDeque<>();
+        ad.addLast(0);
+        ad.removeFirst();
+        ad.isEmpty();
+        ad.addLast(3);
+        ad.addFirst(4);
+        ad.removeLast();
+    }
+
 
     public static void main(String[] args) {
         randomTest2();

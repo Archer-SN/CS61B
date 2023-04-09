@@ -50,7 +50,7 @@ public class ArrayDeque<T> {
             nextFirst -= 1;
         } else {
             lastSize -= 1;
-            nextFirst = currentFirst() + 1;
+            nextFirst = currentLast() + lastSize;
         }
     }
 
@@ -62,7 +62,7 @@ public class ArrayDeque<T> {
             nextLast += 1;
         } else {
             firstSize -= 1;
-            nextLast = currentLast() - 1;
+            nextLast = currentFirst() - firstSize;
         }
     }
 
