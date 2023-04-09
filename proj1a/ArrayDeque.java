@@ -91,7 +91,7 @@ public class ArrayDeque<T> {
         int fSize = firstSize;
         int index = currentFirst();
         T[] firstItems = (T[]) new Object[firstSize];
-        for (int i = 0; i < firstSize; i++) {
+        for (int i = firstSize - 1; i >= 0; i--) {
             if (index < 0) {
                 index = items.length - 1;
             }
@@ -104,9 +104,9 @@ public class ArrayDeque<T> {
     /* Gets all the items in the last half of the array */
     private T[] getLastItems() {
         int lSize = lastSize;
-        int index = currentFirst();
-        T[] lastItems = (T[]) new Object[firstSize];
-        for (int i = 0; i < lastSize; i++) {
+        int index = currentLast();
+        T[] lastItems = (T[]) new Object[lastSize];
+        for (int i = lastSize - 1; i >= 0; i--) {
             if (index >= items.length) {
                 index = 0;
             }
