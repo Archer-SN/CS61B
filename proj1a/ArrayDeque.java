@@ -5,8 +5,7 @@ public class ArrayDeque<T> {
     private int defaultFactor = 2;
 
     /* Size of first and second half of the array */
-    private int firstSize = 0;
-    private int lastSize = 0;
+    private int size = 0;
 
     private T[] items;
     /* The first element starts at the left most
@@ -20,98 +19,49 @@ public class ArrayDeque<T> {
         items = (T[]) new Object[defaultSize];
         nextFirst = 0;
         nextLast = defaultSize - 1;
-
-        firstSize = 0;
-        lastSize = 0;
+        size = 0;
     }
 
 
     /* Returns the index of the first item in the array */
     private int currentFirst() {
-        if (firstSize == 0) {
-            return nextLast + lastSize;
+        int currentFirst = nextFirst - 1;
+        if (currentFirst < 0) {
+            currentFirst = items.length - 1;
         }
-        return nextFirst - 1;
+        return currentFirst;
     }
 
     /* Returns the index of the last item in the array */
     private int currentLast() {
-        if (lastSize == 0) {
-            return nextFirst - firstSize;
+        int currentLast = nextLast + 1;
+        if (currentLast >= items.length) {
+            currentLast = 0;
         }
-        return nextLast + 1;
+        return currentLast;
     }
 
-    /* Decreases firstSize when called
-     * Handles the case where the next index is unbound */
-    private void decreaseFirstSize() {
-        if (firstSize > 0) {
-            firstSize -= 1;
-            nextFirst -= 1;
-        } else {
-            lastSize -= 1;
-            nextFirst = currentLast() + lastSize;
-        }
-    }
-
-    /* Decreases lastSize when called
-     *  Handles the case where the next index is unbound */
-    private void decreaseLastSize() {
-        if (lastSize > 0) {
-            lastSize -= 1;
-            nextLast += 1;
-        } else {
-            firstSize -= 1;
-            nextLast = currentFirst() - firstSize;
+    /* Moves the nextFirst index by i
+     *  If i is positive, it means that an element is added
+     *  If i is negative, it means that an element is removed
+     *  If i is zero, it means that we just want to convert unbound index to bound index*/
+    private void changeNextFirst(int i) {
+        nextFirst += i;
+        if (nextFirst < 0 || nextFirst >= items.length) {
+            nextFirst = nextLast + size;
         }
     }
 
-    /* Increase firstSize when called and also changes the nextFirst index */
-    private void increaseFirstSize() {
-        nextFirst += 1;
-        firstSize += 1;
-        if (nextFirst >= items.length) {
-            nextFirst = 0;
+    /* Moves the nextLast index by i
+     *  If i is positive, it means that an element is removed
+     *  If i is negative, it means that an element is added
+     *  If i is zero, it means that we just want to convert unbound index to bound index*/
+    private void changeNextLast(int i) {
+        nextLast += i;
+        if (nextLast < 0 || nextLast >= items.length) {
+            nextLast = nextFirst - size;
         }
-    }
 
-    /* Increase lastSize when called and also changes the nextLast index */
-    private void increaseLastSize() {
-        nextLast -= 1;
-        lastSize += 1;
-        if (nextLast < 0) {
-            nextLast = items.length - 1;
-        }
-    }
-
-    /* Gets all the items in the first half of the array */
-    private T[] getFirstItems() {
-        int fSize = firstSize;
-        int index = currentFirst();
-        T[] firstItems = (T[]) new Object[firstSize];
-        for (int i = firstSize - 1; i >= 0; i--) {
-            if (index < 0) {
-                index = items.length - 1;
-            }
-            firstItems[i] = items[index];
-            index -= 1;
-        }
-        return firstItems;
-    }
-
-    /* Gets all the items in the last half of the array */
-    private T[] getLastItems() {
-        int lSize = lastSize;
-        int index = currentLast();
-        T[] lastItems = (T[]) new Object[lastSize];
-        for (int i = lastSize - 1; i >= 0; i--) {
-            if (index >= items.length) {
-                index = 0;
-            }
-            lastItems[i] = items[index];
-            index += 1;
-        }
-        return lastItems;
     }
 
     /**
@@ -121,12 +71,8 @@ public class ArrayDeque<T> {
     private void resize(float factor) {
         int newSize = Math.round(size() * factor);
         T[] newItems = (T[]) new Object[newSize];
-        T[] firstItems = getFirstItems();
-        T[] lastItems = getLastItems();
 
-        System.arraycopy(firstItems, 0, newItems, 0, firstSize);
-        System.arraycopy(lastItems, 0, newItems, newSize - lastSize, lastSize);
-        nextLast = newSize - lastSize - 1;
+        System.arraycopy(items, 0, newItems, 0, size);
         items = newItems;
     }
 
@@ -138,7 +84,8 @@ public class ArrayDeque<T> {
 
         items[nextFirst] = item;
 
-        increaseFirstSize();
+        changeNextFirst(1);
+        size += 1;
     }
 
     /* Adds an item to the left of the previous last item */
@@ -148,17 +95,18 @@ public class ArrayDeque<T> {
         }
         items[nextLast] = item;
 
-        increaseLastSize();
+        changeNextLast(-1);
+        size += 1;
     }
 
     /* Checks if the array is empty */
     public boolean isEmpty() {
-        return size() == 0;
+        return size == 0;
     }
 
     /* Returns the size of the array */
     public int size() {
-        return firstSize + lastSize;
+        return size;
     }
 
     /* Prints all the elements in the array */
@@ -178,7 +126,8 @@ public class ArrayDeque<T> {
         }
         T item = items[currentFirst()];
         items[currentFirst()] = null;
-        decreaseFirstSize();
+        changeNextFirst(-1);
+        size -= 1;
 
         // If the array usage is small, we resize the array to save space
         if (size() > 8 && size() < items.length * 0.25) {
@@ -196,7 +145,8 @@ public class ArrayDeque<T> {
         }
         T item = items[currentLast()];
         items[currentLast()] = null;
-        decreaseLastSize();
+        changeNextLast(1);
+        size -= 1;
 
         // If the array usage is small, we resize the array to save space
         if (size() > 8 && size() < items.length * 0.25) {
@@ -206,27 +156,15 @@ public class ArrayDeque<T> {
         return item;
     }
 
-    /* Converts normal array index to ArrayDeque index
-     *  ArrayDeque is a circular array so its index is ordered differently
-     */
-    private int toArrayDequeIndex(int index) {
-        if (index >= firstSize) {
-            // The AD index is equal to
-            return items.length - 1 - (index - firstSize);
-        } else {
-            return currentFirst() - index;
-        }
-    }
-
     /* Given an index in terms of normal array, return the item */
     public T get(int index) {
-        int adIndex = toArrayDequeIndex(index);
-        if (index >= items.length) {
+        if (index >= size) {
             return null;
-        } else if (index >= firstSize) {
-            return items[adIndex];
         } else {
-            // Our first element is the righter most element
+            int adIndex = currentFirst() - index;
+            if (adIndex < 0) {
+                adIndex += size;
+            }
             return items[adIndex];
         }
     }
