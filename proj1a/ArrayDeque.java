@@ -94,8 +94,6 @@ public class ArrayDeque<T> {
         T[] newItems = (T[]) new Object[newSize];
 
         System.arraycopy(getAllItems(), 0, newItems, 0, size);
-        nextLast = newItems.length - 1;
-        nextFirst = size;
         items = newItems;
     }
 
