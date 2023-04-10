@@ -1,11 +1,4 @@
 public class ArrayDequeTest {
-    public static void addGetTest() {
-        ArrayDeque<Integer> ad = new ArrayDeque<>();
-        ad.addFirst(1);
-        ad.addFirst(2);
-        int value = ad.get(1);
-        System.out.println(value);
-    }
 
     public static void addFirstAddLastTest() {
         ArrayDeque<Integer> ad = new ArrayDeque<>();
@@ -149,8 +142,28 @@ public class ArrayDequeTest {
         ad.removeLast();
     }
 
+    private static void addGetTest() {
+        ArrayDeque<Integer> ad = new ArrayDeque<>();
+        for (int i = 1; i <= 16; i++) {
+            ad.addLast(i);
+        }
+        System.out.println(ad.get(5));
+
+    }
+
+    private static void addGetTest2() {
+        ArrayDeque<Integer> ad = new ArrayDeque<>();
+        for (int i = 1; i <= 16; i++) {
+            ad.addFirst(i);
+        }
+        //System.out.println(ad.get(5));
+
+    }
+
 
     public static void main(String[] args) {
+        addGetTest();
+        addGetTest2();
         randomTest2();
         randomTest3();
         randomTest4();

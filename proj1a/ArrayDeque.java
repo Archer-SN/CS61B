@@ -29,6 +29,9 @@ public class ArrayDeque<T> {
         if (currentFirst < 0) {
             currentFirst = items.length - 1;
         }
+        if (items[currentFirst] == null) {
+            currentFirst = nextLast + size;
+        }
         return currentFirst;
     }
 
@@ -37,6 +40,9 @@ public class ArrayDeque<T> {
         int currentLast = nextLast + 1;
         if (currentLast >= items.length) {
             currentLast = 0;
+        }
+        if (items[currentLast] == null) {
+            currentLast = nextFirst - size;
         }
         return currentLast;
     }
@@ -48,7 +54,7 @@ public class ArrayDeque<T> {
     private void changeNextFirst(int i) {
         nextFirst += i;
         if (nextFirst < 0) {
-            nextFirst = nextLast + size;
+            nextFirst = items.length - 1;
         }
         else if (nextFirst >= items.length) {
             nextFirst = 0;
@@ -62,7 +68,7 @@ public class ArrayDeque<T> {
     private void changeNextLast(int i) {
         nextLast += i;
         if (nextLast < 0) {
-            nextLast = nextFirst - size;
+            nextLast = items.length - 1;
         } else if (nextLast >= items.length) {
             nextLast = 0;
         }
@@ -78,6 +84,8 @@ public class ArrayDeque<T> {
         T[] newItems = (T[]) new Object[newSize];
 
         System.arraycopy(items, 0, newItems, 0, size);
+        nextLast = newItems.length - 1;
+        nextFirst = size;
         items = newItems;
     }
 
