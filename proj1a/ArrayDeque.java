@@ -176,7 +176,7 @@ public class ArrayDeque<T> {
         } else {
             int adIndex = currentFirst() - index;
             if (adIndex < 0) {
-                adIndex += size;
+                adIndex += size - 1;
             }
             return items[adIndex];
         }

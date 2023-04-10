@@ -144,10 +144,10 @@ public class ArrayDequeTest {
 
     private static void addGetTest() {
         ArrayDeque<Integer> ad = new ArrayDeque<>();
-        for (int i = 1; i <= 16; i++) {
+        for (int i = 1; i <= 8; i++) {
             ad.addLast(i);
         }
-        System.out.println(ad.get(5));
+        System.out.println(ad.get(7));
 
     }
 
