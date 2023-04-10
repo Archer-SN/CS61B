@@ -160,6 +160,34 @@ public class ArrayDequeTest {
 
     }
 
+    private static void randomTest10() {
+        ArrayDeque<Integer> ad = new ArrayDeque<>();
+        ad.addLast(0);
+        ad.removeFirst();
+        ad.addFirst(2);
+        ad.removeFirst();
+        ad.addLast(4);
+        ad.removeFirst();
+        ad.addLast(6);
+        ad.addLast(7);
+        ad.removeLast();
+        ad.removeLast();
+        ad.addFirst(10);
+        ad.removeLast();
+        ad.addFirst(12);
+        ad.addFirst(13);
+        ad.get(0);
+        ad.removeLast();
+        ad.get(0);
+        ad.addFirst(17);
+        System.out.println(ad.get(0));
+        ad.removeFirst();
+        System.out.println(ad.get(0));
+        ad.addFirst(21);
+        ad.addLast(22);
+        System.out.println(ad.get(2));
+    }
+
 
     public static void main(String[] args) {
         addGetTest();
@@ -172,5 +200,6 @@ public class ArrayDequeTest {
         randomTest7();
         randomTest8();
         randomTest9();
+        randomTest10();
     }
 }

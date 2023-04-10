@@ -55,8 +55,7 @@ public class ArrayDeque<T> {
         nextFirst += i;
         if (nextFirst < 0) {
             nextFirst = items.length - 1;
-        }
-        else if (nextFirst >= items.length) {
+        } else if (nextFirst >= items.length) {
             nextFirst = 0;
         }
     }
@@ -75,15 +74,26 @@ public class ArrayDeque<T> {
 
     }
 
+    /* Get all the items in the array that is not null */
+    private T[] getAllItems() {
+        T[] allItems = (T[]) new Object[size];
+        int allItemsIndex = 0;
+        for (int i = 0; i < items.length; i++) {
+            if (items[i] != null) {
+                allItems[allItemsIndex] = items[i];
+            }
+        }
+        return allItems;
+    }
+
     /**
      * Creates a new array with larger size with all the previous elements in it
-     * The array is expanded at the middle
      */
     private void resize(float factor) {
         int newSize = Math.round(size() * factor);
         T[] newItems = (T[]) new Object[newSize];
 
-        System.arraycopy(items, 0, newItems, 0, size);
+        System.arraycopy(getAllItems(), 0, newItems, 0, size);
         nextLast = newItems.length - 1;
         nextFirst = size;
         items = newItems;
@@ -176,7 +186,7 @@ public class ArrayDeque<T> {
         } else {
             int adIndex = currentFirst() - index;
             if (adIndex < 0) {
-                adIndex += size - 1;
+                adIndex = adIndex + 1 + currentLast();
             }
             return items[adIndex];
         }
