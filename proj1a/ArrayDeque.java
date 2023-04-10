@@ -47,8 +47,11 @@ public class ArrayDeque<T> {
      *  If i is zero, it means that we just want to convert unbound index to bound index*/
     private void changeNextFirst(int i) {
         nextFirst += i;
-        if (nextFirst < 0 || nextFirst >= items.length) {
+        if (nextFirst < 0) {
             nextFirst = nextLast + size;
+        }
+        else if (nextFirst >= items.length) {
+            nextFirst = 0;
         }
     }
 
@@ -58,8 +61,10 @@ public class ArrayDeque<T> {
      *  If i is zero, it means that we just want to convert unbound index to bound index*/
     private void changeNextLast(int i) {
         nextLast += i;
-        if (nextLast < 0 || nextLast >= items.length) {
+        if (nextLast < 0) {
             nextLast = nextFirst - size;
+        } else if (nextLast >= items.length) {
+            nextLast = 0;
         }
 
     }
