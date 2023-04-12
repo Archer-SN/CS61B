@@ -1,12 +1,12 @@
 /* A circular array class */
 public class ArrayDeque<T> {
-    int defaultSize = 8;
-    int defaultFactor = 2;
+    private int defaultSize = 8;
+    private int defaultFactor = 2;
 
-    T[] items;
-    int size;
-    int nextFirst;
-    int nextLast;
+    private T[] items;
+    private int size;
+    private int nextFirst;
+    private int nextLast;
 
     /* Creates an empty array with default size */
     public ArrayDeque() {
@@ -89,7 +89,7 @@ public class ArrayDeque<T> {
         size += 1;
     }
 
-    boolean isEmpty() {
+    public boolean isEmpty() {
         return size == 0;
     }
 
@@ -104,34 +104,45 @@ public class ArrayDeque<T> {
         System.out.println();
     }
 
+    /* Resizes the array if the length of items is 16 or more
+     * And the usage is less than 25% */
+    private void resizeDown() {
+        if ((items.length >= 16) && (size < (0.25 * items.length))) {
+            resize(0.25);
+        }
+    }
+
     /* Removes the first item from array deque */
     public T removeFirst() {
+        if (size == 0) {
+            return null;
+        }
+
         T firstItem = get(0);
         items[getIndex(0)] = null;
         size -= 1;
         moveNextFirst(1);
 
-        /* Resizes the array if the length of items is 16 or more
-         * And the usage is less than 25% */
-        if ((size >= 16) && (size < (0.25 * items.length))) {
-            resize(0.25);
-        }
+        /* Will be only called if the size is low enough */
+        resizeDown();
 
         return firstItem;
     }
 
+
     /* Removes the last item from array deque */
     public T removeLast() {
+        if (size == 0) {
+            return null;
+        }
+
         T lastItem = get(minusOne(size));
         items[getIndex(size - 1)] = null;
         size -= 1;
         moveNextLast(-1);
 
-        /* Resizes the array if the length of items is 16 or more
-         * And the usage is less than 25% */
-        if ((items.length >= 16) && (size < (0.25 * items.length))) {
-            resize(0.25);
-        }
+        /* Will be only called if the size is low enough */
+        resizeDown();
 
         return lastItem;
     }

@@ -57,7 +57,7 @@ public class ArrayDequeTest {
             ad.addFirst(i);
         }
         ad.removeLast();
-        int actual = ad.size;
+        int actual = ad.size();
         Assert.assertEquals(expected, actual);
     }
 
@@ -110,21 +110,21 @@ public class ArrayDequeTest {
         }
         ad.addFirst(9);
         ad.addLast(200);
-        int actual = ad.get(ad.size - 1);
+        int actual = ad.get(ad.size() - 1);
         Assert.assertEquals(expected, actual);
     }
 
     @Test
     public void resizeDownTest() {
         ArrayDeque<Integer> ad = new ArrayDeque<Integer>();
-        int expected = 2;
-        for (int i = 1; i <= 16; i++) {
+        int expected = 1;
+        for (int i = 1; i <= 64; i++) {
             ad.addFirst(i);
         }
-        for (int i = 0; i < 14; i++) {
+        for (int i = 0; i < 63; i++) {
             ad.removeLast();
         }
-        int actual = ad.size;
+        int actual = ad.size();
         Assert.assertEquals(expected, actual);
     }
 }
