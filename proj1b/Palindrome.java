@@ -24,4 +24,21 @@ public class Palindrome {
         }
         return true;
     }
+
+    /** Checks if a given word is a palindrome
+     * According the rules in CharacterComparator cc */
+    public boolean isPalindrome(String word, CharacterComparator cc) {
+        Deque<Character> deque = wordToDeque(word);
+        while (deque.size() > 0) {
+            /* Handles cases with odd length */
+            if (deque.size() == 1) {
+                return true;
+            }
+            /* If the first is not equal to last according to cc's rules then it is not a palindrome */
+            else if (!cc.equalChars(deque.removeFirst(), deque.removeLast())) {
+                return false;
+            }
+        }
+        return true;
+    }
 }
