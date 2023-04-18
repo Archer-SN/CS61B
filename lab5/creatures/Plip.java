@@ -8,7 +8,10 @@ import huglife.Occupant;
 import java.awt.Color;
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.LinkedList;
 import java.util.Map;
+
+import static huglife.HugLifeUtils.*;
 
 /**
  * An implementation of a motile pacifist photosynthesizer.
@@ -57,8 +60,22 @@ public class Plip extends Creature {
      * that you get this exactly correct.
      */
     public Color color() {
-        g = 63;
+        r = 99;
+        g = (int) (96 * energy + 63);
+        b = 76;
         return color(r, g, b);
+    }
+
+    /* Changes the total energy of plip
+     * with a lower energy cap at 0
+     * and a higher energy cap at 2 */
+    private void changeEnergy(double amount) {
+        energy += amount;
+        if (energy > 2) {
+            energy = 2;
+        } else if (energy < 0) {
+            energy = 0;
+        }
     }
 
     /**
@@ -74,7 +91,7 @@ public class Plip extends Creature {
      * private static final variable. This is not required for this lab.
      */
     public void move() {
-        // TODO
+        changeEnergy(-0.15);
     }
 
 
@@ -82,7 +99,7 @@ public class Plip extends Creature {
      * Plips gain 0.2 energy when staying due to photosynthesis.
      */
     public void stay() {
-        // TODO
+        changeEnergy(0.2);
     }
 
     /**
@@ -91,7 +108,8 @@ public class Plip extends Creature {
      * Plip.
      */
     public Plip replicate() {
-        return this;
+        energy /= 2;
+        return new Plip(energy);
     }
 
     /**
@@ -108,22 +126,39 @@ public class Plip extends Creature {
      * for an example to follow.
      */
     public Action chooseAction(Map<Direction, Occupant> neighbors) {
-        // Rule 1
-        Deque<Direction> emptyNeighbors = new ArrayDeque<>();
+        // Initialization
+        LinkedList<Direction> emptyNeighbors = new LinkedList<>();
         boolean anyClorus = false;
-        // TODO
-        // (Google: Enhanced for-loop over keys of NEIGHBORS?)
-        // for () {...}
+        for (Map.Entry<Direction, Occupant> neighbor : neighbors.entrySet()) {
+            Direction neighborDirection = neighbor.getKey();
+            Occupant occupant = neighbor.getValue();
+            if (occupant.name().equals("empty")) {
+                emptyNeighbors.addFirst(neighborDirection);
+            }
+            else if (occupant.name().equals("clorus")) {
+                anyClorus = true;
+            }
+        }
 
-        if (false) { // FIXME
-            // TODO
+        // Rule 1
+        if (emptyNeighbors.isEmpty()) {
+            return new Action(Action.ActionType.STAY);
         }
 
         // Rule 2
         // HINT: randomEntry(emptyNeighbors)
+        if (energy >= 1.0) {
+            return new Action(Action.ActionType.REPLICATE, randomEntry(emptyNeighbors));
+        }
 
         // Rule 3
-
+        if (anyClorus) {
+            // Either returns 0 or 1
+            int shouldMove = randomInt(1);
+            if (shouldMove == 1) {
+                return new Action(Action.ActionType.MOVE, randomEntry(emptyNeighbors));
+            }
+        }
         // Rule 4
         return new Action(Action.ActionType.STAY);
     }
