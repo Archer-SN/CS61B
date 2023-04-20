@@ -1,0 +1,12 @@
+What was the most annoying bug you had and how did you fix it? Did you use the debugger? Did you fix it by adding special cases? Did you do any change-and-pray (where you make a tiny change and hope the AG approves)?
+The most annoying bug that I had NullPointerException error. My code somehow kept going beyond the array size. Sometimes the index even get to 27 even though the size of the array is 12!
+I ended up having to rewrite the whole code again. This time I used a unit test. It made the whole process a lot smoother. I finished the ArrayDeque part of the project with around 130 lines of code
+compared to the first buggy code which had 180 lines. 
+Did you end up cutting anything out to make your code simpler? If so, what?
+I cut out currentFirst and currentLast. These 2 methods made the project way more complicated than it had to be. All I needed to do was use get(). Simpler, easier, cleaner, and better.
+Do you have any special cases in your code?
+Yes, I have special case for size equal to zero.
+Do you have any private helper methods?
+Yes, I have plenty of them. They make my code look cleaner.
+Does your code repeat itself anywhere? Would private helper methods have helped?
+Nope.
