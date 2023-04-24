@@ -55,9 +55,9 @@ public class Dog implements Serializable {
      * Saves a dog to a file for future use.
      */
     public void saveDog() {
-        if (fromFile(name) != null) {
+        /*if (fromFile(name) != null) {
             return;
-        }
+        }*/
         File newDogFile = Utils.join(".caters", "dogs", name);
         Utils.writeObject(newDogFile, this);
     }
