@@ -42,10 +42,13 @@ public class CapersRepository {
     public static void writeStory(String text) {
         File storyFile = Utils.join(".capers", "story");
         String stringContent = Utils.readContentsAsString(storyFile);
-        byte[] byteContent = Utils.readContents(storyFile);
-        Utils.writeContents(storyFile, byteContent, "\n" ,text);
-        System.out.println(stringContent);
-        System.out.println(text);
+        // Add a new line to stringContent if it isn't empty
+        if (!stringContent.isEmpty()) {
+            stringContent += "\n";
+        }
+        Utils.writeContents(storyFile, stringContent ,text);
+        System.out.print(stringContent);
+        System.out.print(text);
     }
 
     /**
@@ -66,6 +69,8 @@ public class CapersRepository {
      * @param name String name of the Dog whose birthday we're celebrating.
      */
     public static void celebrateBirthday(String name) {
-        // TODO
+        Dog birthdayDog = Dog.fromFile(name);
+        birthdayDog.haveBirthday();
+        birthdayDog.saveDog();
     }
 }
