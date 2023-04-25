@@ -8,6 +8,9 @@ from shutil import copyfile, rmtree
 from math import log
 from glob import glob
 
+sys.stdin.reconfigure(encoding='utf-8')
+sys.stdout.reconfigure(encoding='utf-8')
+
 SHORT_USAGE = """\
 Usage: python3 runner.py OPTIONS TEST.in ...
    OPTIONS may include
