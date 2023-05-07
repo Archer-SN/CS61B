@@ -30,6 +30,7 @@ public class TestBSTMap {
             assertTrue( null != getValue && getValue.equals(1+i)
                         && hasKey);
         }
+        b.printInOrder();
         assertEquals(455, b.size());
         b.clear();
         assertEquals(0, b.size());
