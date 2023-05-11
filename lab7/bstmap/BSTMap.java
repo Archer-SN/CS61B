@@ -200,24 +200,38 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
     }
 
 
-    /** Given a key returns the key's parent tree
-     * The existence of the key is assumed to exist */
+    /**
+     * Given a key returns the key's parent tree
+     * The existence of the key is assumed to exist
+     * If currentT is the root node, currentT is returned
+     */
     private BSTMap<K, V> getParentNode(BSTMap<K, V> currentT, BSTMap<K, V> parentT, K key) {
         int comparison = key.compareTo(currentT.node.key);
-        // key == node.key
+        // If the parent node is found
         if (comparison == 0) {
             return parentT;
         }
-        // key < node.key
+        // Moves to the left of the tree
         else if (comparison < 0) {
             return getParentNode(currentT.left, currentT, key);
         }
+        // Moves to the right of the trees
         else {
             return getParentNode(currentT.right, currentT, key);
         }
     }
 
-    private void getRightMostNode()
+    private BSTMap<K, V> getRightMostNode(BSTMap<K, V> T) {
+        if (T.right == null) {
+            return T;
+        }
+        return getRightMostNode(T.right);
+    }
+
+    private void changeNodeValue(BSTNode node, K key, V value) {
+        node.key = key;
+        node.value = value;
+    }
 
     /**
      * Remove the mapping for the specified key if it is present
@@ -225,36 +239,68 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
     @Override
     public V remove(K key) {
         BSTMap<K, V> T = get(key, this);
-        BSTMap<K,V> parentT = getParentNode(this, this, key);
+
         if (T == null) {
             return null;
         }
-        else if (T.left == null && T.right == null) {
-            V value = T.node.value;
-            T = null;
-            return value;
-        }
-        else if (T.left != null && T.right != null) {
 
+        BSTMap<K, V> parentT = getParentNode(this, this, key);
+        V value = T.node.value;
+
+        // Case 1: The node has no children
+        if (T.left == null && T.right == null) {
+            // If T is the root node
+            if (parentT == T) {
+                T.node = null;
+            }
+            // Removing T from existence
+            else if (parentT.left == T) {
+                parentT.left = null;
+            }
+            // Removing T from existence
+            else {
+                parentT.right = null;
+            }
         }
-        else {
+        // Case 2: The node has one child
+        else if (T.left == null || T.right == null) {
             BSTMap<K, V> leaf;
             // Stores the leaf value before we remove the current node
             if (T.left == null) {
                 leaf = T.right;
-            }
-            else {
+            } else {
                 leaf = T.left;
             }
 
-            // Relink the parent node with leaf
-            if (parentT.right == T) {
-                parentT.right = leaf;
+            // If T is a root node
+            if (parentT == T) {
+                changeNodeValue(T.node, leaf.node.key, leaf.node.value);
+                T.left = leaf.left;
+                T.right = leaf.right;
             }
-            else {
+            // Relink the parent node with leaf
+            else if (parentT.right == T) {
+                parentT.right = leaf;
+            } else {
                 parentT.left = leaf;
             }
         }
+        // Case 3: The node has 2 children
+        else {
+            BSTMap<K, V> newT = getRightMostNode(T.left);
+            BSTMap<K, V> newTParent = getParentNode(this, this, newT.node.key);
+
+            // Setting the root node T to be newT
+            T.node.value = newT.node.value;
+            T.node.key = newT.node.key;
+
+            // Linking the newTParent to newT's right node
+            // There is no right child because this is the righter most node
+            // This will remove newT's existence.
+            newTParent.left = newT.left;
+        }
+        size -= 1;
+        return value;
     }
 
     @Override
