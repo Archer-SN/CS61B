@@ -1,15 +1,15 @@
 package gitlet;
 
 import java.io.File;
+
 import static gitlet.Utils.*;
 
-// TODO: any imports you need here
-
-/** Represents a gitlet repository.
+/**
+ * Represents a gitlet repository.
  *  TODO: It's a good idea to give a description here of what else this Class
  *  does at a high level.
  *
- *  @author TODO
+ * @author TODO
  */
 public class Repository {
     /**
@@ -21,28 +21,55 @@ public class Repository {
      */
 
 
-    /** The current working directory. */
+    /**
+     * The current working directory.
+     */
     public static final File CWD = new File(System.getProperty("user.dir"));
-    /** The .gitlet directory. */
+    /**
+     * The .gitlet directory.
+     */
     public static final File GITLET_DIR = join(CWD, ".gitlet");
 
-    /** A folder for storing references to branches */
+    /**
+     * A folder for storing references to branches
+     */
     public static final File BRANCHES = join(GITLET_DIR, "branches");
 
-    /** A reference to the latest commit in the active branch  */
+    /**
+     * A reference to the latest commit in the active branch
+     */
     public static String ACTIVE_BRANCH;
 
-    /** A reference to the current node that we are at */
+    /**
+     * A reference to the current node that we are at
+     */
     public static String HEAD;
 
-    /** The directory for TO_ADD and TO_REMOVE */
+    /**
+     * The directory for TO_ADD and TO_REMOVE
+     */
     public static final File STAGE_DIR = join(GITLET_DIR, "stage");
 
-    /** This directory keeps track of the files that are staged for commit */
+    /**
+     * This directory keeps track of the files that are staged for commit
+     */
     public static final File TO_ADD = join(STAGE_DIR, "to_add");
 
-    /** This directory keeps track of the files that are staged for removal */
-    public static final File TO_REMOVE = join(STAGE_DIR, "to_remove");;
+    /**
+     * This directory keeps track of the files that are staged for removal
+     */
+    public static final File TO_REMOVE = join(STAGE_DIR, "to_remove");
+    ;
+
+    /**
+     * A directory that stores all the commits that have been made
+     */
+    public static final File COMMITS = join(GITLET_DIR, "commits");
+
+    /**
+     * This directory stores all the versions of all the files that have been committed
+     */
+    public static final File FILES = join(GITLET_DIR, "files");
 
     /* TODO: fill in the rest of this class. */
     public static void setupPersistence() {
@@ -52,11 +79,13 @@ public class Repository {
         STAGE_DIR.mkdir();
         TO_ADD.mkdir();
         TO_REMOVE.mkdir();
-
-
+        COMMITS.mkdir();
+        FILES.mkdir();
     }
 
-    /** Stage the file for addition */
+    /**
+     * Stage the file for addition
+     */
     public static void add() {
 
     }
@@ -65,8 +94,12 @@ public class Repository {
 
     }
 
-    /** */
-    public static void rm() {
+    /**
+     * Unstage the file if it is currently staged for addition
+     * If it is tracked in the current commit, stage it for removal
+     * and remove the file from the working directory
+     */
+    public static void remove() {
 
     }
 
@@ -74,5 +107,30 @@ public class Repository {
 
     }
 
+    public static void globalLog() {
+    }
 
+    public static void find() {
+
+    }
+
+    public static void status() {}
+
+    public static void checkout() {}
+
+    public static void branch() {
+
+    }
+
+    public static void removeBranch() {
+
+    }
+
+    public static void reset() {
+
+    }
+
+    public static void merge() {
+
+    }
 }

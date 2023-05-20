@@ -19,6 +19,10 @@ public class Commit {
      * comment above them describing what that variable represents and how that
      * variable is used. We've provided one example for `message`.
      */
+
+    /** A pointer that points to the parent commit */
+    private Commit parent;
+
     /** The id of this comment in the form of a strong from SHA-1 hash */
     public String id;
 
@@ -28,7 +32,21 @@ public class Commit {
     /** The message of this Commit. */
     private String message;
 
-    private File
+    /** A collection of file ids in the commit */
+    private String[] fileIds;
 
-    /* TODO: fill in the rest of this class. */
+    // Initial commit
+    public Commit() {
+        // Creates a new id for this commit
+        id = Utils.sha1(this);
+        timestamp = new Date(0);
+    }
+
+    public Commit(String msg, String[] fIds) {
+        // Creates a new id for this commit
+        id = Utils.sha1(this);
+        timestamp = new Date();
+        message = msg;
+        fileIds = fIds;
+    }
 }
