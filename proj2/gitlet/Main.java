@@ -1,5 +1,6 @@
 package gitlet;
 
+
 /**
  * Driver class for Gitlet, a subset of the Git version-control system.
  *
@@ -14,12 +15,13 @@ public class Main {
     public static void main(String[] args) {
         // TODO: what if args is empty?
         if (args.length == 0) {
-            throw new GitletException("Not enough argument!");
+            throw Utils.error("Please enter a command");
         }
+
         String firstArg = args[0];
         switch (firstArg) {
             case "init":
-                // TODO: handle the `init` command
+                Repository.init();
                 break;
             case "add":
                 // TODO: handle the `add [filename]` command
@@ -57,6 +59,8 @@ public class Main {
             case "merge":
                 // TODO
                 break;
+            default:
+                throw Utils.error("No command with that name exists", args);
         }
     }
 }

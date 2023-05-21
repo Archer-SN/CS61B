@@ -2,16 +2,21 @@ package gitlet;
 
 // TODO: any imports you need here
 
+import java.io.File;
+import java.io.Serializable;
 import java.util.Date; // TODO: You'll likely use this in this class
 import java.util.Formatter;
 
-/** Represents a gitlet commit object.
+import static gitlet.Utils.join;
+
+/**
+ * Represents a gitlet commit object.
  *  TODO: It's a good idea to give a description here of what else this Class
  *  does at a high level.
  *
- *  @author TODO
+ * @author TODO
  */
-public class Commit {
+public class Commit implements Serializable {
     /**
      * TODO: add instance variables here.
      *
@@ -20,19 +25,30 @@ public class Commit {
      * variable is used. We've provided one example for `message`.
      */
 
-    /** A pointer that points to the parent commit */
-    private Commit parent;
 
-    /** The id of this comment in the form of a strong from SHA-1 hash */
+    /**
+     * A pointer that points to the parent commit
+     */
+    private String parent;
+
+    /**
+     * The id of this comment in the form of a strong from SHA-1 hash
+     */
     public String id;
 
-    /** The time this commit was created */
+    /**
+     * The time this commit was created
+     */
     private Date timestamp;
 
-    /** The message of this Commit. */
+    /**
+     * The message of this Commit.
+     */
     private String message;
 
-    /** A collection of file ids in the commit */
+    /**
+     * A collection of file ids in the commit
+     */
     private String[] fileIds;
 
     // Initial commit
@@ -42,11 +58,29 @@ public class Commit {
         timestamp = new Date(0);
     }
 
-    public Commit(String msg, String[] fIds) {
+    public Commit(String message, String[] fileIds, String parentCommit) {
         // Creates a new id for this commit
-        id = Utils.sha1(this);
-        timestamp = new Date();
-        message = msg;
-        fileIds = fIds;
+        this.id = Utils.sha1(this);
+        this.timestamp = new Date();
+        this.message = message;
+        this.fileIds = fileIds;
+        this.parent = parentCommit;
+    }
+
+    /**
+     * Given a commit id,  reads the commit object from a file
+     * Getting a commit file does not need an instance, so this is a static method
+     */
+    public static Commit fromFile(String id) {
+        File commitFile = Utils.join(Repository.COMMITS_DIR, id);
+        return Utils.readObject(commitFile, Commit.class);
+    }
+
+    /**
+     * Saves the current commit into a file
+     */
+    public void saveCommit() {
+        File commitFile = Utils.join(Repository.COMMITS_DIR, id);
+        Utils.writeObject(commitFile, this);
     }
 }

@@ -33,10 +33,10 @@ public class Repository {
     /**
      * A folder for storing references to branches
      */
-    public static final File BRANCHES = join(GITLET_DIR, "branches");
+    public static final File BRANCHES_DIR = join(GITLET_DIR, "branches");
 
     /**
-     * A reference to the latest commit in the active branch
+     * The name of the branch that we are currently in
      */
     public static String ACTIVE_BRANCH;
 
@@ -53,34 +53,39 @@ public class Repository {
     /**
      * This directory keeps track of the files that are staged for commit
      */
-    public static final File TO_ADD = join(STAGE_DIR, "to_add");
+    public static final File TO_ADD_DIR = join(STAGE_DIR, "to_add");
 
     /**
      * This directory keeps track of the files that are staged for removal
      */
-    public static final File TO_REMOVE = join(STAGE_DIR, "to_remove");
+    public static final File TO_REMOVE_DIR = join(STAGE_DIR, "to_remove");
     ;
 
     /**
      * A directory that stores all the commits that have been made
      */
-    public static final File COMMITS = join(GITLET_DIR, "commits");
+    public static final File COMMITS_DIR = join(GITLET_DIR, "commits");
 
     /**
      * This directory stores all the versions of all the files that have been committed
      */
     public static final File FILES = join(GITLET_DIR, "files");
 
-    /* TODO: fill in the rest of this class. */
-    public static void setupPersistence() {
+    public static void init() {
         // Creating folders
         GITLET_DIR.mkdir();
-        BRANCHES.mkdir();
+        BRANCHES_DIR.mkdir();
         STAGE_DIR.mkdir();
-        TO_ADD.mkdir();
-        TO_REMOVE.mkdir();
-        COMMITS.mkdir();
+        TO_ADD_DIR.mkdir();
+        TO_REMOVE_DIR.mkdir();
+        COMMITS_DIR.mkdir();
         FILES.mkdir();
+
+        // Create an initial commit
+        Commit initialCommit = new Commit();
+        ACTIVE_BRANCH = "master";
+        HEAD = initialCommit.id;
+        initialCommit.saveCommit();
     }
 
     /**
@@ -114,9 +119,11 @@ public class Repository {
 
     }
 
-    public static void status() {}
+    public static void status() {
+    }
 
-    public static void checkout() {}
+    public static void checkout() {
+    }
 
     public static void branch() {
 
@@ -133,4 +140,10 @@ public class Repository {
     public static void merge() {
 
     }
+
+    private void changeBranch(String branchName) {
+        ACTIVE_BRANCH = branchName;
+        HEAD = getBranchRef(branchName);
+    }
+
 }
