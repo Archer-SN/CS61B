@@ -41,7 +41,7 @@ public class Repository {
     public static String ACTIVE_BRANCH;
 
     /**
-     * A reference to the current node that we are at
+     * A reference to the current commit that we are at
      */
     public static String HEAD;
 
@@ -83,8 +83,8 @@ public class Repository {
 
         // Create an initial commit
         Commit initialCommit = new Commit();
-        ACTIVE_BRANCH = "master";
-        HEAD = initialCommit.id;
+        Branch masterBranch = new Branch("master", initialCommit.id);
+        changeBranch("master");
         initialCommit.saveCommit();
     }
 
@@ -141,9 +141,10 @@ public class Repository {
 
     }
 
-    private void changeBranch(String branchName) {
+    /** Moves the HEAD pointer and change the ACTIVE_BRANCH */
+    private static void changeBranch(String branchName) {
         ACTIVE_BRANCH = branchName;
-        HEAD = getBranchRef(branchName);
+        HEAD = Branch.getBranchRef(branchName);
     }
 
 }
