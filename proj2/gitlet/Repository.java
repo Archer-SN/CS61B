@@ -72,7 +72,7 @@ public class Repository {
     public static final File FILES = join(GITLET_DIR, "files");
 
     public static void init() {
-        // Creating folders
+        // Create all the necessary folders
         GITLET_DIR.mkdir();
         BRANCHES_DIR.mkdir();
         STAGE_DIR.mkdir();
@@ -83,8 +83,11 @@ public class Repository {
 
         // Create an initial commit
         Commit initialCommit = new Commit();
+        // Create an initial branch
         Branch masterBranch = new Branch("master", initialCommit.id);
-        changeBranch("master");
+        // Save the branch data into an actual file
+        masterBranch.saveBranch();
+        switchBranch("master");
         initialCommit.saveCommit();
     }
 
@@ -125,8 +128,9 @@ public class Repository {
     public static void checkout() {
     }
 
-    public static void branch() {
-
+    public static void branch(String branchName) {
+        Branch newBranch = new Branch(branchName, HEAD);
+        newBranch.saveBranch();
     }
 
     public static void removeBranch() {
@@ -142,7 +146,7 @@ public class Repository {
     }
 
     /** Moves the HEAD pointer and change the ACTIVE_BRANCH */
-    private static void changeBranch(String branchName) {
+    private static void switchBranch(String branchName) {
         ACTIVE_BRANCH = branchName;
         HEAD = Branch.getBranchRef(branchName);
     }
