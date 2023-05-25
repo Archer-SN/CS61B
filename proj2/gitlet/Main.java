@@ -23,7 +23,8 @@ public class Main {
                 Repository.init();
                 break;
             case "add":
-                // TODO: handle the `add [filename]` command
+                String fileName = args[1];
+                Repository.add(fileName);
                 break;
             case "commit":
                 // TODO

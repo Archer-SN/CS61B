@@ -94,8 +94,12 @@ public class Repository {
     /**
      * Stage the file for addition
      */
-    public static void add() {
-
+    // TODO: Handle the case where the staged file is already in the commit
+    public static void add(String fileName) {
+        File file = Utils.join(CWD, fileName);
+        File stageFile = Utils.join(COMMITS_DIR, fileName);
+        // Copies the contents of file to stageFile
+        Utils.writeContents(stageFile, Utils.readContents(file));
     }
 
     public static void commit() {
