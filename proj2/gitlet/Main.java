@@ -1,6 +1,10 @@
 package gitlet;
 
 
+import javax.sound.midi.SysexMessage;
+
+import static gitlet.Repository.*;
+
 /**
  * Driver class for Gitlet, a subset of the Git version-control system.
  *
@@ -20,11 +24,11 @@ public class Main {
         String firstArg = args[0];
         switch (firstArg) {
             case "init":
-                Repository.init();
+                init();
                 break;
             case "add":
                 String fileName = args[1];
-                Repository.add(fileName);
+                add(fileName);
                 break;
             case "commit":
                 // TODO

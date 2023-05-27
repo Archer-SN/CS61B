@@ -1,6 +1,7 @@
 package gitlet;
 
 import java.io.File;
+import java.util.HashMap;
 
 import static gitlet.Utils.*;
 
@@ -67,9 +68,16 @@ public class Repository {
     public static final File COMMITS_DIR = join(GITLET_DIR, "commits");
 
     /**
-     * This directory stores all the versions of all the files that have been committed
+     * This a file that is an object that uses hashmap
+     * stores all versions of all the files that have been committed
      */
-    public static final File FILES = join(GITLET_DIR, "files");
+    public static final File COMMIT_FILES = join(GITLET_DIR, "files");
+
+    /**
+     * This will read COMMIT_FILES as an object
+     */
+    private static HashMap<String, File> commitFiles;
+
 
     public static void init() {
         // Create all the necessary folders
@@ -79,7 +87,7 @@ public class Repository {
         TO_ADD_DIR.mkdir();
         TO_REMOVE_DIR.mkdir();
         COMMITS_DIR.mkdir();
-        FILES.mkdir();
+        FILES.mkdirs();
 
         // Create an initial commit
         Commit initialCommit = new Commit();
@@ -149,7 +157,9 @@ public class Repository {
 
     }
 
-    /** Moves the HEAD pointer and change the ACTIVE_BRANCH */
+    /**
+     * Moves the HEAD pointer and change the ACTIVE_BRANCH
+     */
     private static void switchBranch(String branchName) {
         ACTIVE_BRANCH = branchName;
         HEAD = Branch.getBranchRef(branchName);
