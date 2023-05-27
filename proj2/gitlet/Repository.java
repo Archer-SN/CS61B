@@ -68,13 +68,12 @@ public class Repository {
     public static final File COMMITS_DIR = join(GITLET_DIR, "commits");
 
     /**
-     * This a file that is an object that uses hashmap
-     * stores all versions of all the files that have been committed
+     * This is a directory that stores all the commited files
      */
     public static final File COMMIT_FILES = join(GITLET_DIR, "files");
 
     /**
-     * This will read COMMIT_FILES as an object
+     * This object map each sha-1 id to each file
      */
     private static HashMap<String, File> commitFiles;
 
