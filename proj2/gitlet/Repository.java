@@ -68,7 +68,7 @@ public class Repository {
     public static final File COMMITS_DIR = join(GITLET_DIR, "commits");
 
     /**
-     * This is a directory that stores all the commited files
+     * This is a directory that stores all the committed files
      */
     public static final File COMMIT_FILES = join(GITLET_DIR, "files");
 
@@ -86,7 +86,7 @@ public class Repository {
         TO_ADD_DIR.mkdir();
         TO_REMOVE_DIR.mkdir();
         COMMITS_DIR.mkdir();
-        FILES.mkdirs();
+        COMMIT_FILES.mkdirs();
 
         // Create an initial commit
         Commit initialCommit = new Commit();
@@ -103,10 +103,22 @@ public class Repository {
      */
     // TODO: Handle the case where the staged file is already in the commit
     public static void add(String fileName) {
+        // Gets the file in the Current Working Directory with the given name
         File file = Utils.join(CWD, fileName);
+        // Read the contents of the file
+        byte[] fileContents = Utils.readContents(file);
+        // Convert the file's contents to sha1 string
+        String fileKey = Utils.sha1(fileContents);
+
         File stageFile = Utils.join(COMMITS_DIR, fileName);
+
+        // If the content of this file is already in the commit, then do nothing
+        if (commitFiles.containsKey(fileKey)) {
+            return;
+        }
+
         // Copies the contents of file to stageFile
-        Utils.writeContents(stageFile, Utils.readContents(file));
+        Utils.writeContents(stageFile, fileContents);
     }
 
     public static void commit() {
