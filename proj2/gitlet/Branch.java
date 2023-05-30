@@ -17,11 +17,13 @@ public class Branch implements Serializable {
         this.ref = ref;
     }
 
+    // Saves the current branch into branches directory
     public void saveBranch() {
         File branchFile = Utils.join(Repository.BRANCHES_DIR, name);
         Utils.writeObject(branchFile, this);
     }
 
+    /** Given a branch name return a Branch object */
     public static Branch getBranch(String branchName) {
         File branchFile = Utils.join(Repository.BRANCHES_DIR, branchName);
         return Utils.readObject(branchFile, Branch.class);

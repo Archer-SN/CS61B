@@ -2,6 +2,7 @@ package gitlet;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.TreeMap;
 
 import static gitlet.Utils.*;
 
@@ -14,8 +15,6 @@ import static gitlet.Utils.*;
  */
 public class Repository {
     /**
-     * TODO: add instance variables here.
-     *
      * List all instance variables of the Repository class here with a useful
      * comment above them describing what that variable represents and how that
      * variable is used. We've provided two examples for you.
@@ -60,7 +59,6 @@ public class Repository {
      * This directory keeps track of the files that are staged for removal
      */
     public static final File TO_REMOVE_DIR = join(STAGE_DIR, "to_remove");
-    ;
 
     /**
      * A directory that stores all the commits that have been made
@@ -70,7 +68,7 @@ public class Repository {
     /**
      * This is a directory that stores all the committed files
      */
-    public static final File COMMIT_FILES = join(GITLET_DIR, "files");
+    public static final File COMMIT_FILES = join(GITLET_DIR, "commit_files");
 
     /**
      * This object map each sha-1 id to each file
@@ -101,10 +99,14 @@ public class Repository {
     /**
      * Stage the file for addition
      */
-    // TODO: Handle the case where the staged file is already in the commit
     public static void add(String fileName) {
         // Gets the file in the Current Working Directory with the given name
         File file = Utils.join(CWD, fileName);
+
+        if (!file.exists()) {
+            throw Utils.error("File does not exist.");
+        }
+
         // Read the contents of the file
         byte[] fileContents = Utils.readContents(file);
         // Convert the file's contents to sha1 string
@@ -112,8 +114,9 @@ public class Repository {
 
         File stageFile = Utils.join(COMMITS_DIR, fileName);
 
-        // If the content of this file is already in the commit, then do nothing
+        // If the content of this file is already in the commit, remove it from the staging area.
         if (commitFiles.containsKey(fileKey)) {
+            stageFile.delete();
             return;
         }
 
@@ -121,8 +124,28 @@ public class Repository {
         Utils.writeContents(stageFile, fileContents);
     }
 
-    public static void commit() {
+    /**
+     * Saves all the files in the staging area into COMMIT_FILES directory
+     * A new commit is created
+     */
+    public static void commit(String message) {
+        Commit prevCommit = Commit.fromFile(HEAD);
+        // A tree map with keys as name and values as sha-1 id
+        TreeMap<String, String> fileMap = prevCommit.fileMap;
+        // Names of the files that are staged for addition
+        String[] toAddFiles = TO_ADD_DIR.list();
 
+        // Adds all the files in the staging directory to fileMap
+        if (toAddFiles != null) {
+            for (String fileName : toAddFiles) {
+                File file = Utils.join(TO_ADD_DIR, fileName);
+                fileMap.put(fileName, Utils.sha1(Utils.readContents(file)));
+            }
+        }
+
+        Commit newCommit = new Commit(message, fileMap, prevCommit.id);
+        // Points HEAD to the latest commit in the branch
+        HEAD = newCommit.id;
     }
 
     /**

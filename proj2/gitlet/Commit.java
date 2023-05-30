@@ -4,9 +4,8 @@ package gitlet;
 
 import java.io.File;
 import java.io.Serializable;
-import java.util.Date; // TODO: You'll likely use this in this class
-import java.util.Formatter;
-import java.util.HashMap;
+import java.util.Date;
+import java.util.TreeMap;
 
 import static gitlet.Utils.join;
 
@@ -47,11 +46,8 @@ public class Commit implements Serializable {
      */
     private String message;
 
-    /**
-     * A collection of file ids in the commit
-     */
-    private String[] fileIds;
-
+    /** A map of file names to ids */
+    TreeMap<String, String> fileMap;
 
     // Initial commit
     public Commit() {
@@ -60,12 +56,12 @@ public class Commit implements Serializable {
         timestamp = new Date(0);
     }
 
-    public Commit(String message, String[] fileIds, String parentCommit) {
+    public Commit(String message, TreeMap<String, String> fileMap, String parentCommit) {
         // Creates a new id for this commit
         this.id = Utils.sha1(Utils.serialize(this));
         this.timestamp = new Date();
         this.message = message;
-        this.fileIds = fileIds;
+        this.fileMap = fileMap;
         this.parent = parentCommit;
     }
 
