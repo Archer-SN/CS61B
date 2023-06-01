@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.TreeMap;
 
+
 import static gitlet.Utils.*;
 
 /**
@@ -107,10 +108,8 @@ public class Repository {
             throw Utils.error("File does not exist.");
         }
 
-        // Read the contents of the file
-        byte[] fileContents = Utils.readContents(file);
-        // Convert the file's contents to sha1 string
-        String fileKey = Utils.sha1(fileContents);
+        // Get file's SHA-1 ID
+        String fileKey = Utils.getFileId(file);
 
         File stageFile = Utils.join(COMMITS_DIR, fileName);
 
@@ -121,7 +120,7 @@ public class Repository {
         }
 
         // Copies the contents of file to stageFile
-        Utils.writeContents(stageFile, fileContents);
+        Utils.copyFile(file, stageFile);
     }
 
     /**
@@ -131,6 +130,7 @@ public class Repository {
     public static void commit(String message) {
         Commit prevCommit = Commit.fromFile(HEAD);
         // A tree map with keys as name and values as sha-1 id
+        // We get tracked files from the previous commit
         TreeMap<String, String> fileMap = prevCommit.fileMap;
         // Names of the files that are staged for addition
         String[] toAddFiles = TO_ADD_DIR.list();
@@ -139,11 +139,16 @@ public class Repository {
         if (toAddFiles != null) {
             for (String fileName : toAddFiles) {
                 File file = Utils.join(TO_ADD_DIR, fileName);
+                File commitFile = Utils.join(COMMITS_DIR, Utils.getFileId(file));
                 fileMap.put(fileName, Utils.sha1(Utils.readContents(file)));
             }
         }
 
         Commit newCommit = new Commit(message, fileMap, prevCommit.id);
+
+        // Clear all the files in the staging area
+        clearDirectory(TO_ADD_DIR);
+        clearDirectory(TO_REMOVE_DIR);
         // Points HEAD to the latest commit in the branch
         HEAD = newCommit.id;
     }
@@ -198,5 +203,6 @@ public class Repository {
         ACTIVE_BRANCH = branchName;
         HEAD = Branch.getBranchRef(branchName);
     }
+
 
 }
