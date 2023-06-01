@@ -31,7 +31,12 @@ public class Main {
                 add(fileName);
                 break;
             case "commit":
-                // TODO
+                String message = args[1];
+                // Throws an error if no message is given
+                if (message.isEmpty()) {
+                    throw Utils.error("Please enter a commit message");
+                }
+                commit(message);
                 break;
             case "rm":
                 // TODO

@@ -1,5 +1,7 @@
 package gitlet;
 
+import jdk.jshell.execution.Util;
+
 import java.io.File;
 import java.util.HashMap;
 import java.util.TreeMap;
@@ -126,8 +128,14 @@ public class Repository {
     /**
      * Saves all the files in the staging area into COMMIT_FILES directory
      * A new commit is created
+     * TODO: Handle staging for removal
      */
     public static void commit(String message) {
+        // If there is no file in the staging area.
+        if (TO_ADD_DIR.list().length == 0 && TO_REMOVE_DIR.list().length == 0) {
+            throw Utils.error("No changes added to the commit");
+        }
+
         Commit prevCommit = Commit.fromFile(HEAD);
         // A tree map with keys as name and values as sha-1 id
         // We get tracked files from the previous commit
@@ -139,8 +147,12 @@ public class Repository {
         if (toAddFiles != null) {
             for (String fileName : toAddFiles) {
                 File file = Utils.join(TO_ADD_DIR, fileName);
-                File commitFile = Utils.join(COMMITS_DIR, Utils.getFileId(file));
-                fileMap.put(fileName, Utils.sha1(Utils.readContents(file)));
+                String fileId = Utils.getFileId(file);
+                File commitFile = Utils.join(COMMITS_DIR, fileId);
+                // Copies the file into COMMITS_DIR
+                copyFile(file, commitFile);
+                // Stores fileName as a key and fileId as a value
+                fileMap.put(fileName, fileId);
             }
         }
 
@@ -149,6 +161,7 @@ public class Repository {
         // Clear all the files in the staging area
         clearDirectory(TO_ADD_DIR);
         clearDirectory(TO_REMOVE_DIR);
+
         // Points HEAD to the latest commit in the branch
         HEAD = newCommit.id;
     }
