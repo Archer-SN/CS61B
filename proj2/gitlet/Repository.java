@@ -4,6 +4,7 @@ import jdk.jshell.execution.Util;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.TreeMap;
 
 
@@ -128,7 +129,6 @@ public class Repository {
     /**
      * Saves all the files in the staging area into COMMIT_FILES directory
      * A new commit is created
-     * TODO: Handle staging for removal
      */
     public static void commit(String message) {
         // If there is no file in the staging area.
@@ -141,19 +141,22 @@ public class Repository {
         // We get tracked files from the previous commit
         TreeMap<String, String> fileMap = prevCommit.fileMap;
         // Names of the files that are staged for addition
-        String[] toAddFiles = TO_ADD_DIR.list();
+        File[] toAddFiles = TO_ADD_DIR.listFiles();
+        File[] toRemoveFiles = TO_REMOVE_DIR.listFiles();
 
-        // Adds all the files in the staging directory to fileMap
-        if (toAddFiles != null) {
-            for (String fileName : toAddFiles) {
-                File file = Utils.join(TO_ADD_DIR, fileName);
-                String fileId = Utils.getFileId(file);
-                File commitFile = Utils.join(COMMITS_DIR, fileId);
-                // Copies the file into COMMITS_DIR
-                copyFile(file, commitFile);
-                // Stores fileName as a key and fileId as a value
-                fileMap.put(fileName, fileId);
-            }
+        // Adds all the files in the staging directory to fileMapif (toAddFiles != null) {
+        for (File file : Objects.requireNonNull(toAddFiles)) {
+            String fileId = Utils.getFileId(file);
+            File commitFile = Utils.join(COMMITS_DIR, fileId);
+            // Copies the file into COMMITS_DIR
+            copyFile(file, commitFile);
+            // Stores fileName as a key and fileId as a value
+            fileMap.put(file.getName(), fileId);
+        }
+
+        // Untrack all the files that are staged for removal
+        for (File file : Objects.requireNonNull(toRemoveFiles)) {
+            fileMap.remove(file.getName());
         }
 
         Commit newCommit = new Commit(message, fileMap, prevCommit.id);
@@ -171,7 +174,7 @@ public class Repository {
      * If it is tracked in the current commit, stage it for removal
      * and remove the file from the working directory
      */
-    public static void remove() {
+    public static void remove(String fileName) {
 
     }
 
