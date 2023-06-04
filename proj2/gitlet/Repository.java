@@ -3,9 +3,7 @@ package gitlet;
 import jdk.jshell.execution.Util;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Objects;
-import java.util.TreeMap;
+import java.util.*;
 
 
 import static gitlet.Utils.*;
@@ -75,10 +73,18 @@ public class Repository {
     public static final File COMMIT_FILES = join(GITLET_DIR, "commit_files");
 
     /**
-     * This object map each sha-1 id to each file
+     * This object maps each sha-1 id to each file
      */
     private static HashMap<String, File> commitFiles;
 
+    /** Keeps track of names of all the files that are being tracked */
+    private static HashSet<String> trackedFileNames;
+
+    /** This object keeps tracks of the names of the files that are being staged for addition */
+    private static HashSet<String> toAddNames;
+
+    /** This object keeps tracks of the names of the files that are being staged for removal */
+    private static HashSet<String> toRemoveNames;
 
     public static void init() {
         // Create all the necessary folders
@@ -124,6 +130,8 @@ public class Repository {
 
         // Copies the contents of file to stageFile
         Utils.copyFile(file, stageFile);
+        // Add this file to toAddMap
+        toAddNames.add(file.getName());
     }
 
     /**
@@ -132,7 +140,7 @@ public class Repository {
      */
     public static void commit(String message) {
         // If there is no file in the staging area.
-        if (TO_ADD_DIR.list().length == 0 && TO_REMOVE_DIR.list().length == 0) {
+        if (Objects.requireNonNull(TO_ADD_DIR.list()).length == 0 && Objects.requireNonNull(TO_REMOVE_DIR.list()).length == 0) {
             throw Utils.error("No changes added to the commit");
         }
 
@@ -144,7 +152,7 @@ public class Repository {
         File[] toAddFiles = TO_ADD_DIR.listFiles();
         File[] toRemoveFiles = TO_REMOVE_DIR.listFiles();
 
-        // Adds all the files in the staging directory to fileMapif (toAddFiles != null) {
+        // Adds all the files in the staging directory to fileMap
         for (File file : Objects.requireNonNull(toAddFiles)) {
             String fileId = Utils.getFileId(file);
             File commitFile = Utils.join(COMMITS_DIR, fileId);
@@ -165,6 +173,10 @@ public class Repository {
         clearDirectory(TO_ADD_DIR);
         clearDirectory(TO_REMOVE_DIR);
 
+        // Clear all the names in the HashSets
+        toAddNames.clear();
+        toRemoveNames.clear();
+
         // Points HEAD to the latest commit in the branch
         HEAD = newCommit.id;
     }
@@ -175,7 +187,27 @@ public class Repository {
      * and remove the file from the working directory
      */
     public static void remove(String fileName) {
-
+        // If the file is being staged for addition
+        if (toAddNames.contains(fileName)) {
+            File stagedFile = join(TO_ADD_DIR, fileName);
+            // Remove the fileName from the list of file names that are being staged for addition
+            toAddNames.remove(fileName);
+            // Remove the file from the staging folder
+            stagedFile.delete();
+        }
+        // If the file is tracked in the current commit
+        else if (trackedFileNames.contains(fileName)) {
+            File file = join(CWD, fileName);
+            File toRemoveFile = join(TO_REMOVE_DIR, fileName);
+            // Stage the file for removal
+            copyFile(file, toRemoveFile);
+            toRemoveNames.add(fileName);
+            // Remove the file from the current working directory
+            file.delete();
+        }
+        else {
+            throw error("No reason to remove the file.");
+        }
     }
 
     public static void log() {
@@ -219,6 +251,5 @@ public class Repository {
         ACTIVE_BRANCH = branchName;
         HEAD = Branch.getBranchRef(branchName);
     }
-
 
 }
