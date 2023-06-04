@@ -39,7 +39,8 @@ public class Main {
                 commit(message);
                 break;
             case "rm":
-                // TODO
+                // Passes file's name into the remove method
+                remove(args[1]);
                 break;
             case "log":
                 // TODO
