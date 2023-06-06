@@ -255,7 +255,13 @@ public class Repository {
     public static void status() {
     }
 
-    public static void checkout() {
+    public static void checkoutFile(String fileName) {
+    }
+
+    public static void checkoutFile(String commitId, String fileName) {
+    }
+
+    public static void checkoutBranch(String branchName) {
     }
 
     public static void branch(String branchName) {
