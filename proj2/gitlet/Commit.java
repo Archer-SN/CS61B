@@ -29,22 +29,22 @@ public class Commit implements Serializable {
     /**
      * A pointer that points to the parent commit
      */
-    private String parent;
+    String parent;
 
     /**
      * The id of this comment in the form of a strong from SHA-1 hash
      */
-    public String id;
+    String id;
 
     /**
      * The time this commit was created
      */
-    private Date timestamp;
+    Date timestamp;
 
     /**
      * The message of this Commit.
      */
-    private String message;
+    String message;
 
     /** A map of file names to ids */
     TreeMap<String, String> fileMap;
@@ -80,5 +80,14 @@ public class Commit implements Serializable {
     public void saveCommit() {
         File commitFile = Utils.join(Repository.COMMITS_DIR, id);
         Utils.writeObject(commitFile, this);
+    }
+
+    /** Prints the commit info with the format like below  */
+    public void printInfo() {
+        System.out.println("===");
+        System.out.println("commit: " + id);
+        System.out.println("Date: " + timestamp);
+        System.out.println(message);
+        System.out.println();
     }
 }

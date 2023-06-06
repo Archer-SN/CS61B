@@ -6,8 +6,6 @@ import java.io.File;
 import java.util.*;
 
 
-import static gitlet.Utils.*;
-
 /**
  * Represents a gitlet repository.
  *  TODO: It's a good idea to give a description here of what else this Class
@@ -30,12 +28,12 @@ public class Repository {
     /**
      * The .gitlet directory.
      */
-    public static final File GITLET_DIR = join(CWD, ".gitlet");
+    public static final File GITLET_DIR = Utils.join(CWD, ".gitlet");
 
     /**
      * A folder for storing references to branches
      */
-    public static final File BRANCHES_DIR = join(GITLET_DIR, "branches");
+    public static final File BRANCHES_DIR = Utils.join(GITLET_DIR, "branches");
 
     /**
      * The name of the branch that we are currently in
@@ -50,40 +48,46 @@ public class Repository {
     /**
      * The directory for TO_ADD and TO_REMOVE
      */
-    public static final File STAGE_DIR = join(GITLET_DIR, "stage");
+    public static final File STAGE_DIR = Utils.join(GITLET_DIR, "stage");
 
     /**
      * This directory keeps track of the files that are staged for commit
      */
-    public static final File TO_ADD_DIR = join(STAGE_DIR, "to_add");
+    public static final File TO_ADD_DIR = Utils.join(STAGE_DIR, "to_add");
 
     /**
      * This directory keeps track of the files that are staged for removal
      */
-    public static final File TO_REMOVE_DIR = join(STAGE_DIR, "to_remove");
+    public static final File TO_REMOVE_DIR = Utils.join(STAGE_DIR, "to_remove");
 
     /**
      * A directory that stores all the commits that have been made
      */
-    public static final File COMMITS_DIR = join(GITLET_DIR, "commits");
+    public static final File COMMITS_DIR = Utils.join(GITLET_DIR, "commits");
 
     /**
      * This is a directory that stores all the committed files
      */
-    public static final File COMMIT_FILES = join(GITLET_DIR, "commit_files");
+    public static final File COMMIT_FILES_DIR = Utils.join(GITLET_DIR, "commit_files");
 
     /**
      * This object maps each sha-1 id to each file
      */
     private static HashMap<String, File> commitFiles;
 
-    /** Keeps track of names of all the files that are being tracked */
+    /**
+     * Keeps track of names of all the files that are being tracked
+     */
     private static HashSet<String> trackedFileNames;
 
-    /** This object keeps tracks of the names of the files that are being staged for addition */
+    /**
+     * This object keeps tracks of the names of the files that are being staged for addition
+     */
     private static HashSet<String> toAddNames;
 
-    /** This object keeps tracks of the names of the files that are being staged for removal */
+    /**
+     * This object keeps tracks of the names of the files that are being staged for removal
+     */
     private static HashSet<String> toRemoveNames;
 
     public static void init() {
@@ -94,7 +98,7 @@ public class Repository {
         TO_ADD_DIR.mkdir();
         TO_REMOVE_DIR.mkdir();
         COMMITS_DIR.mkdir();
-        COMMIT_FILES.mkdirs();
+        COMMIT_FILES_DIR.mkdirs();
 
         // Create an initial commit
         Commit initialCommit = new Commit();
@@ -157,7 +161,7 @@ public class Repository {
             String fileId = Utils.getFileId(file);
             File commitFile = Utils.join(COMMITS_DIR, fileId);
             // Copies the file into COMMITS_DIR
-            copyFile(file, commitFile);
+            Utils.copyFile(file, commitFile);
             // Stores fileName as a key and fileId as a value
             fileMap.put(file.getName(), fileId);
         }
@@ -170,8 +174,8 @@ public class Repository {
         Commit newCommit = new Commit(message, fileMap, prevCommit.id);
 
         // Clear all the files in the staging area
-        clearDirectory(TO_ADD_DIR);
-        clearDirectory(TO_REMOVE_DIR);
+        Utils.clearDirectory(TO_ADD_DIR);
+        Utils.clearDirectory(TO_REMOVE_DIR);
 
         // Clear all the names in the HashSets
         toAddNames.clear();
@@ -189,7 +193,7 @@ public class Repository {
     public static void remove(String fileName) {
         // If the file is being staged for addition
         if (toAddNames.contains(fileName)) {
-            File stagedFile = join(TO_ADD_DIR, fileName);
+            File stagedFile = Utils.join(TO_ADD_DIR, fileName);
             // Remove the fileName from the list of file names that are being staged for addition
             toAddNames.remove(fileName);
             // Remove the file from the staging folder
@@ -197,24 +201,51 @@ public class Repository {
         }
         // If the file is tracked in the current commit
         else if (trackedFileNames.contains(fileName)) {
-            File file = join(CWD, fileName);
-            File toRemoveFile = join(TO_REMOVE_DIR, fileName);
+            File file = Utils.join(CWD, fileName);
+            File toRemoveFile = Utils.join(TO_REMOVE_DIR, fileName);
             // Stage the file for removal
-            copyFile(file, toRemoveFile);
+            Utils.copyFile(file, toRemoveFile);
             toRemoveNames.add(fileName);
             // Remove the file from the current working directory
             file.delete();
-        }
-        else {
-            throw error("No reason to remove the file.");
+        } else {
+            throw Utils.error("No reason to remove the file.");
         }
     }
 
+    /**
+     * A recursive method that ends when the current commit has no parent
+     */
+    private static void log(String commitId) {
+        File commitFile = Utils.join(COMMITS_DIR, commitId);
+        // Turn the file into Commit object
+        Commit commit = Utils.readObject(commitFile, Commit.class);
+        commit.printInfo();
+
+        // Base case (No more commit)
+        if (commit.parent == null) {
+            return;
+        }
+        // Continue recursion
+        log(commit.parent);
+    }
+
+    /**
+     * TODO: Implement log for merge
+     * Starting from the current commit, displays info about each
+     * commit backwards along the commit tree until the initial commit
+     */
     public static void log() {
-
+        log(HEAD);
     }
 
+    /** Displays information of all the commits ever made */
     public static void globalLog() {
+        File[] commitFilesList = COMMIT_FILES_DIR.listFiles();
+        for (File commitFile: Objects.requireNonNull(commitFilesList)) {
+            Commit commit = Utils.readObject(commitFile, Commit.class);
+            commit.printInfo();
+        }
     }
 
     public static void find() {
