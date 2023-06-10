@@ -94,15 +94,21 @@ public class Repository implements Serializable {
      */
     private HashSet<String> toRemoveNames;
 
+    /** Gets a repository object from a file
+     * Returns null if the repository does not exist */
     public static Repository getRepo() {
-        return Utils.readObject(REPO, Repository.class);
+        if (REPO.exists()) {
+            return Utils.readObject(REPO, Repository.class);
+        }
+        return null;
     }
 
+    /** Saves the repository into a file */
     public void saveRepo() {
         Utils.writeObject(REPO, this);
     }
 
-    public void init() {
+    public Repository() {
         // Create all the necessary folders
         GITLET_DIR.mkdir();
         BRANCHES_DIR.mkdir();

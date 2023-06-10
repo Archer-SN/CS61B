@@ -3,8 +3,6 @@ package gitlet;
 
 import javax.sound.midi.SysexMessage;
 
-import static gitlet.Repository.*;
-
 /**
  * Driver class for Gitlet, a subset of the Git version-control system.
  *
@@ -20,11 +18,14 @@ public class Main {
         if (args.length == 0) {
             throw Utils.error("Please enter a command");
         }
-        Repository repo = getRepo();
         String firstArg = args[0];
+        Repository repo = Repository.getRepo();
+        if (!Repository.GITLET_DIR.exists() && !firstArg.equals("init")) {
+            throw Utils.error("Not in an initialized Gitlet directory.");
+        }
         switch (firstArg) {
             case "init":
-                repo.init();
+                repo = new Repository();
                 break;
             case "add":
                 String fileName = args[1];
@@ -83,5 +84,6 @@ public class Main {
             default:
                 throw Utils.error("No command with that name exists");
         }
+        repo.saveRepo();
     }
 }
