@@ -54,15 +54,17 @@ public class Commit implements Serializable {
         // Creates a new id for this commit
         id = Utils.sha1(Utils.serialize(this));
         timestamp = new Date(0);
+        // Creates an empty map
+        fileMap = new TreeMap<>();
     }
 
     public Commit(String message, TreeMap<String, String> fileMap, String parentCommit) {
-        // Creates a new id for this commit
-        this.id = Utils.sha1(Utils.serialize(this));
         this.timestamp = new Date();
         this.message = message;
         this.fileMap = fileMap;
         this.parent = parentCommit;
+        // Creates a new id for this commit
+        this.id = Utils.sha1(Utils.serialize(this));
     }
 
     /**

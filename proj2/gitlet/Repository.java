@@ -39,12 +39,12 @@ public class Repository implements Serializable {
     /**
      * The name of the branch that we are currently in
      */
-    public static String ACTIVE_BRANCH;
+    public String ACTIVE_BRANCH;
 
     /**
      * A reference to the current commit that we are at
      */
-    public static String HEAD;
+    public String HEAD;
 
     /**
      * The directory for TO_ADD and TO_REMOVE
@@ -126,6 +126,9 @@ public class Repository implements Serializable {
 
         // Create an initial commit
         Commit initialCommit = new Commit();
+        // Points HEAD to the initial commit
+        HEAD = initialCommit.id;
+
         // Create an initial branch
         Branch masterBranch = new Branch("master", initialCommit.id);
         // Save the branch data into an actual file
@@ -183,7 +186,7 @@ public class Repository implements Serializable {
         // Adds all the files in the staging directory to fileMap
         for (File file : Objects.requireNonNull(toAddFiles)) {
             String fileId = Utils.getFileId(file);
-            File commitFile = Utils.join(COMMITS_DIR, fileId);
+            File commitFile = Utils.join(COMMIT_FILES_DIR, fileId);
             // Copies the file into COMMITS_DIR
             Utils.copyFile(file, commitFile);
             // Stores fileName as a key and fileId as a value
@@ -196,6 +199,7 @@ public class Repository implements Serializable {
         }
 
         Commit newCommit = new Commit(message, fileMap, prevCommit.id);
+        newCommit.saveCommit();
 
         // Clear all the files in the staging area
         Utils.clearDirectory(TO_ADD_DIR);
@@ -297,10 +301,10 @@ public class Repository implements Serializable {
      */
     public void checkoutFile(String commitId, String fileName) {
         Commit commit = Commit.fromFile(commitId);
-        String fileId = commit.fileMap.get(commitId);
+        String fileId = commit.fileMap.get(fileName);
         File commitFile = Utils.join(COMMIT_FILES_DIR, fileId);
         File CWDFile = Utils.join(CWD, fileName);
-        Utils.copyFile(CWDFile, commitFile);
+        Utils.copyFile(commitFile, CWDFile);
     }
 
     public void checkoutBranch(String branchName) {

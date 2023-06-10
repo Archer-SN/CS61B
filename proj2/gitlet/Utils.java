@@ -286,6 +286,7 @@ class Utils {
 
     /**
      * Given an original file, copy its content to the specified file
+     * originalFile is the file that will have its content copied into the copyFile
      */
     static void copyFile(File originalFile, File copyFile) {
         byte[] contents = Utils.readContents(originalFile);
