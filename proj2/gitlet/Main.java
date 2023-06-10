@@ -20,15 +20,15 @@ public class Main {
         if (args.length == 0) {
             throw Utils.error("Please enter a command");
         }
-
+        Repository repo = getRepo();
         String firstArg = args[0];
         switch (firstArg) {
             case "init":
-                init();
+                repo.init();
                 break;
             case "add":
                 String fileName = args[1];
-                add(fileName);
+                repo.add(fileName);
                 break;
             case "commit":
                 String message = args[1];
@@ -36,17 +36,17 @@ public class Main {
                 if (message.isEmpty()) {
                     throw Utils.error("Please enter a commit message");
                 }
-                commit(message);
+                repo.commit(message);
                 break;
             case "rm":
                 // Passes file's name into the remove method
-                remove(args[1]);
+                repo.remove(args[1]);
                 break;
             case "log":
-                // TODO
+                repo.log();
                 break;
             case "global-log":
-                // TODO
+                repo.globalLog();
                 break;
             case "find":
                 // TODO
@@ -55,7 +55,18 @@ public class Main {
                 // TODO
                 break;
             case "checkout":
-                // TODO
+                // First case
+                if (args.length == 3) {
+                    repo.checkoutFile(args[2]);
+                }
+                // Second case
+                if (args.length == 4) {
+                    repo.checkoutFile(args[1], args[3]);
+                }
+                // Third case
+                if (args.length == 2) {
+                    repo.checkoutFile(args[1]);
+                }
                 break;
             case "branch":
                 // TODO

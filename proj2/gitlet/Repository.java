@@ -3,6 +3,7 @@ package gitlet;
 import jdk.jshell.execution.Util;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.*;
 
 
@@ -13,7 +14,7 @@ import java.util.*;
  *
  * @author TODO
  */
-public class Repository {
+public class Repository implements Serializable {
     /**
      * List all instance variables of the Repository class here with a useful
      * comment above them describing what that variable represents and how that
@@ -70,27 +71,38 @@ public class Repository {
      */
     public static final File COMMIT_FILES_DIR = Utils.join(GITLET_DIR, "commit_files");
 
+    // This file saves the Repository object that is created
+    public static final File REPO = Utils.join(GITLET_DIR, "repo");
+
     /**
      * This object maps each sha-1 id to each file
      */
-    private static HashMap<String, File> commitFiles;
+    private HashMap<String, File> commitFiles;
 
     /**
      * Keeps track of names of all the files that are being tracked
      */
-    private static HashSet<String> trackedFileNames;
+    private HashSet<String> trackedFileNames;
 
     /**
      * This object keeps tracks of the names of the files that are being staged for addition
      */
-    private static HashSet<String> toAddNames;
+    private HashSet<String> toAddNames;
 
     /**
      * This object keeps tracks of the names of the files that are being staged for removal
      */
-    private static HashSet<String> toRemoveNames;
+    private HashSet<String> toRemoveNames;
 
-    public static void init() {
+    public static Repository getRepo() {
+        return Utils.readObject(REPO, Repository.class);
+    }
+
+    public void saveRepo() {
+        Utils.writeObject(REPO, this);
+    }
+
+    public void init() {
         // Create all the necessary folders
         GITLET_DIR.mkdir();
         BRANCHES_DIR.mkdir();
@@ -99,6 +111,12 @@ public class Repository {
         TO_REMOVE_DIR.mkdir();
         COMMITS_DIR.mkdir();
         COMMIT_FILES_DIR.mkdirs();
+
+        // Initialize all Hashsets and Hashmaps
+        commitFiles = new HashMap<>();
+        trackedFileNames = new HashSet<>();
+        toAddNames = new HashSet<>();
+        toRemoveNames = new HashSet<>();
 
         // Create an initial commit
         Commit initialCommit = new Commit();
@@ -113,7 +131,7 @@ public class Repository {
     /**
      * Stage the file for addition
      */
-    public static void add(String fileName) {
+    public void add(String fileName) {
         // Gets the file in the Current Working Directory with the given name
         File file = Utils.join(CWD, fileName);
 
@@ -124,7 +142,7 @@ public class Repository {
         // Get file's SHA-1 ID
         String fileKey = Utils.getFileId(file);
 
-        File stageFile = Utils.join(COMMITS_DIR, fileName);
+        File stageFile = Utils.join(TO_ADD_DIR, fileName);
 
         // If the content of this file is already in the commit, remove it from the staging area.
         if (commitFiles.containsKey(fileKey)) {
@@ -142,7 +160,7 @@ public class Repository {
      * Saves all the files in the staging area into COMMIT_FILES directory
      * A new commit is created
      */
-    public static void commit(String message) {
+    public void commit(String message) {
         // If there is no file in the staging area.
         if (Objects.requireNonNull(TO_ADD_DIR.list()).length == 0 && Objects.requireNonNull(TO_REMOVE_DIR.list()).length == 0) {
             throw Utils.error("No changes added to the commit");
@@ -190,7 +208,7 @@ public class Repository {
      * If it is tracked in the current commit, stage it for removal
      * and remove the file from the working directory
      */
-    public static void remove(String fileName) {
+    public void remove(String fileName) {
         // If the file is being staged for addition
         if (toAddNames.contains(fileName)) {
             File stagedFile = Utils.join(TO_ADD_DIR, fileName);
@@ -216,7 +234,7 @@ public class Repository {
     /**
      * A recursive method that ends when the current commit has no parent
      */
-    private static void log(String commitId) {
+    private void log(String commitId) {
         File commitFile = Utils.join(COMMITS_DIR, commitId);
         // Turn the file into Commit object
         Commit commit = Utils.readObject(commitFile, Commit.class);
@@ -235,14 +253,14 @@ public class Repository {
      * Starting from the current commit, displays info about each
      * commit backwards along the commit tree until the initial commit
      */
-    public static void log() {
+    public void log() {
         log(HEAD);
     }
 
     /**
      * Displays information of all the commits ever made
      */
-    public static void globalLog() {
+    public void globalLog() {
         File[] commitFilesList = COMMIT_FILES_DIR.listFiles();
         for (File commitFile : Objects.requireNonNull(commitFilesList)) {
             Commit commit = Utils.readObject(commitFile, Commit.class);
@@ -250,11 +268,11 @@ public class Repository {
         }
     }
 
-    public static void find() {
+    public void find() {
 
     }
 
-    public static void status() {
+    public void status() {
     }
 
     /**
@@ -262,7 +280,7 @@ public class Repository {
      * and puts it in the working directory, overwriting the version of the file that’s already there if there is one.
      * The new version of the file is not staged.
      */
-    public static void checkoutFile(String fileName) {
+    public void checkoutFile(String fileName) {
         checkoutFile(HEAD, fileName);
     }
 
@@ -271,7 +289,7 @@ public class Repository {
      * and puts it in the working directory, overwriting the version of the file that’s already there if there is one.
      * The new version of the file is not staged.
      */
-    public static void checkoutFile(String commitId, String fileName) {
+    public void checkoutFile(String commitId, String fileName) {
         Commit commit = Commit.fromFile(commitId);
         String fileId = commit.fileMap.get(commitId);
         File commitFile = Utils.join(COMMIT_FILES_DIR, fileId);
@@ -279,30 +297,30 @@ public class Repository {
         Utils.copyFile(CWDFile, commitFile);
     }
 
-    public static void checkoutBranch(String branchName) {
+    public void checkoutBranch(String branchName) {
     }
 
-    public static void branch(String branchName) {
+    public void branch(String branchName) {
         Branch newBranch = new Branch(branchName, HEAD);
         newBranch.saveBranch();
     }
 
-    public static void removeBranch() {
+    public void removeBranch() {
 
     }
 
-    public static void reset() {
+    public void reset() {
 
     }
 
-    public static void merge() {
+    public void merge() {
 
     }
 
     /**
      * Moves the HEAD pointer and change the ACTIVE_BRANCH
      */
-    private static void switchBranch(String branchName) {
+    private void switchBranch(String branchName) {
         ACTIVE_BRANCH = branchName;
         HEAD = Branch.getBranchRef(branchName);
     }
