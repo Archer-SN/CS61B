@@ -239,10 +239,12 @@ public class Repository {
         log(HEAD);
     }
 
-    /** Displays information of all the commits ever made */
+    /**
+     * Displays information of all the commits ever made
+     */
     public static void globalLog() {
         File[] commitFilesList = COMMIT_FILES_DIR.listFiles();
-        for (File commitFile: Objects.requireNonNull(commitFilesList)) {
+        for (File commitFile : Objects.requireNonNull(commitFilesList)) {
             Commit commit = Utils.readObject(commitFile, Commit.class);
             commit.printInfo();
         }
@@ -255,10 +257,26 @@ public class Repository {
     public static void status() {
     }
 
+    /**
+     * Takes the version of the file as it exists in the head commit,
+     * and puts it in the working directory, overwriting the version of the file that’s already there if there is one.
+     * The new version of the file is not staged.
+     */
     public static void checkoutFile(String fileName) {
+        checkoutFile(HEAD, fileName);
     }
 
+    /**
+     * Takes the version of the file as it exists in the commit with the given id,
+     * and puts it in the working directory, overwriting the version of the file that’s already there if there is one.
+     * The new version of the file is not staged.
+     */
     public static void checkoutFile(String commitId, String fileName) {
+        Commit commit = Commit.fromFile(commitId);
+        String fileId = commit.fileMap.get(commitId);
+        File commitFile = Utils.join(COMMIT_FILES_DIR, fileId);
+        File CWDFile = Utils.join(CWD, fileName);
+        Utils.copyFile(CWDFile, commitFile);
     }
 
     public static void checkoutBranch(String branchName) {
