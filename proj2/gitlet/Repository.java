@@ -94,8 +94,10 @@ public class Repository implements Serializable {
      */
     private HashSet<String> toRemoveNames;
 
-    /** Gets a repository object from a file
-     * Returns null if the repository does not exist */
+    /**
+     * Gets a repository object from a file
+     * Returns null if the repository does not exist
+     */
     public static Repository getRepo() {
         if (REPO.exists()) {
             return Utils.readObject(REPO, Repository.class);
@@ -103,7 +105,9 @@ public class Repository implements Serializable {
         return null;
     }
 
-    /** Saves the repository into a file */
+    /**
+     * Saves the repository into a file
+     */
     public void saveRepo() {
         Utils.writeObject(REPO, this);
     }
@@ -272,15 +276,28 @@ public class Repository implements Serializable {
      * Displays information of all the commits ever made
      */
     public void globalLog() {
-        File[] commitFilesList = COMMIT_FILES_DIR.listFiles();
-        for (File commitFile : Objects.requireNonNull(commitFilesList)) {
+        File[] commitList = COMMITS_DIR.listFiles();
+        for (File commitFile : Objects.requireNonNull(commitList)) {
             Commit commit = Utils.readObject(commitFile, Commit.class);
             commit.printInfo();
         }
     }
 
-    public void find() {
-
+    /**
+     * Prints out the ids of all commits that have the given commit message, one per line.
+     * If there are multiple such commits, it prints the ids out on separate lines.
+     */
+    public void find(String message) {
+        // Get the list of all commits
+        File[] commitList = COMMITS_DIR.listFiles();
+        // looping through all the commits
+        for (File commitFile : Objects.requireNonNull(commitList)) {
+            Commit commit = Utils.readObject(commitFile, Commit.class);
+            // Prints the commit id if its message match with the given message
+            if (commit.message.equals(message)) {
+                System.out.println(commit.id);
+            }
+        }
     }
 
     public void status() {
