@@ -191,6 +191,7 @@ public class Repository implements Serializable {
             Utils.copyFile(file, commitFile);
             // Stores fileName as a key and fileId as a value
             fileMap.put(file.getName(), fileId);
+            commitFiles.put(fileId, commitFile);
         }
 
         // Untrack all the files that are staged for removal

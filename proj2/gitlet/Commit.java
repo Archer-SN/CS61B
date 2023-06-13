@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.TreeMap;
+import java.util.Formatter;
 
 import static gitlet.Utils.join;
 
@@ -56,6 +57,8 @@ public class Commit implements Serializable {
         timestamp = new Date(0);
         // Creates an empty map
         fileMap = new TreeMap<>();
+        // Initial message
+        message = "initial commit";
     }
 
     public Commit(String message, TreeMap<String, String> fileMap, String parentCommit) {
@@ -86,10 +89,15 @@ public class Commit implements Serializable {
 
     /** Prints the commit info with the format like below  */
     public void printInfo() {
+        Formatter formatter = new Formatter();
         System.out.println("===");
-        System.out.println("commit: " + id);
-        System.out.println("Date: " + timestamp);
+        System.out.println("commit " + id);
+        // TODO: Get a better way to format this
+        System.out.println("Date: " + formatter.format("%ta %tb %te %tT %tY %tz",
+                timestamp, timestamp, timestamp, timestamp, timestamp, timestamp));
         System.out.println(message);
         System.out.println();
+        // Closing a formatter allows it to release resources it may be holding (such as open files).
+        formatter.close();
     }
 }
