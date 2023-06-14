@@ -302,7 +302,24 @@ public class Repository implements Serializable {
 
         // Header for Staged Files
         System.out.println("=== Staged Files ===");
-        
+        for (String fileName : toAddNames) {
+            System.out.println(fileName);
+        }
+
+        // Header for Removed Files
+        System.out.println("=== Removed Files ===");
+        for (String fileName : toRemoveNames) {
+            System.out.println(fileName);
+        }
+
+        // Header for Modifications not Staged for commit
+        System.out.println("=== Modifications Not Staged For Commit ===");
+        // TODO: Bonus points
+
+        // Header for Untracked Files
+        System.out.println("=== Untracked Files ===");
+        // TODO: Bonus points
+
     }
 
     /**
