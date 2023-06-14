@@ -56,7 +56,7 @@ public class Commit implements Serializable {
         id = Utils.sha1(Utils.serialize(this));
         timestamp = new Date(0);
         // Creates an empty map
-        fileMap = new TreeMap<>();
+        fileMap = new TreeMap<String, String>();
         // Initial message
         message = "initial commit";
     }

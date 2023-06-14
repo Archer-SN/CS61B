@@ -80,6 +80,11 @@ public class Repository implements Serializable {
     private HashMap<String, File> commitFiles;
 
     /**
+     * This object maps branch name to its file
+     * */
+    private HashMap<String, File> branchFiles;
+
+    /**
      * Keeps track of names of all the files that are being tracked
      */
     private HashSet<String> trackedFileNames;
@@ -291,8 +296,7 @@ public class Repository implements Serializable {
         // Header for branches
         System.out.println("=== Branches ===");
 
-        String[] branchNames = BRANCHES_DIR.list();
-        for (String branchName : branchNames) {
+        for (String branchName : branchFiles.keySet()) {
             // Add asterisk to the front if the branch is the active branch
             if (branchName.equals(ACTIVE_BRANCH)) {
                 System.out.print("*");
@@ -345,11 +349,16 @@ public class Repository implements Serializable {
     }
 
     public void checkoutBranch(String branchName) {
+        Branch branch = Branch.getBranch(branchName);
     }
 
     public void branch(String branchName) {
         Branch newBranch = new Branch(branchName, HEAD);
         newBranch.saveBranch();
+
+        File branchFile = newBranch.getBranchFile();
+        // Maps the branchName to its file
+        branchFiles.put(branchName, branchFile);
     }
 
     public void removeBranch() {
