@@ -94,8 +94,10 @@ public class Repository implements Serializable {
      */
     private HashSet<String> toRemoveNames;
 
-    /** Gets a repository object from a file
-     * Returns null if the repository does not exist */
+    /**
+     * Gets a repository object from a file
+     * Returns null if the repository does not exist
+     */
     public static Repository getRepo() {
         if (REPO.exists()) {
             return Utils.readObject(REPO, Repository.class);
@@ -103,7 +105,9 @@ public class Repository implements Serializable {
         return null;
     }
 
-    /** Saves the repository into a file */
+    /**
+     * Saves the repository into a file
+     */
     public void saveRepo() {
         Utils.writeObject(REPO, this);
     }
@@ -284,6 +288,21 @@ public class Repository implements Serializable {
     }
 
     public void status() {
+        // Header for branches
+        System.out.println("=== Branches ===");
+
+        String[] branchNames = BRANCHES_DIR.list();
+        for (String branchName : branchNames) {
+            // Add asterisk to the front if the branch is the active branch
+            if (branchName.equals(ACTIVE_BRANCH)) {
+                System.out.print("*");
+            }
+            System.out.println(branchName);
+        }
+
+        // Header for Staged Files
+        System.out.println("=== Staged Files ===");
+        
     }
 
     /**
