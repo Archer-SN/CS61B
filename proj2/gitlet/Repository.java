@@ -211,13 +211,7 @@ public class Repository implements Serializable {
         Commit newCommit = new Commit(message, fileMap, prevCommit.id);
         newCommit.saveCommit();
 
-        // Clear all the files in the staging area
-        Utils.clearDirectory(TO_ADD_DIR);
-        Utils.clearDirectory(TO_REMOVE_DIR);
-
-        // Clear all the names in the HashSets
-        toAddNames.clear();
-        toRemoveNames.clear();
+        clearStagingArea();
 
         // Points HEAD to the latest commit in the branch
         HEAD = newCommit.id;
@@ -362,28 +356,33 @@ public class Repository implements Serializable {
     }
 
     /**
-     * Takes all files in the commit at the head of the given branch, and puts them in the working directory,
+     * Takes all files in the new commit, and puts them in the working directory,
      * overwriting the versions of the files that are already there if they exist
      */
-    public void checkoutBranch(String branchName) {
-        Branch branch = Branch.getBranch(branchName);
-        // The branch's latest commit
-        Commit branchRef = Commit.fromFile(branch.ref);
+    public void checkoutCommit(String commitId) {
+        Commit newCommit = Commit.fromFile(commitId);
         // Replace files in CWD with files in commit_files
-        for (Map.Entry<String, String> entry : branchRef.fileMap.entrySet()) {
+        for (Map.Entry<String, String> entry : newCommit.fileMap.entrySet()) {
             File CWDFile = Utils.join(CWD, entry.getKey());
             File committedFile = Utils.join(COMMIT_FILES_DIR, entry.getValue());
             Utils.copyFile(CWDFile, committedFile);
         }
 
-        // Removing files that are tracked in the current branch, but not tracked in the checked-out branch.
+        // Removing files that are tracked in the current commit, but not tracked in the new commit.
         Commit headCommit = Commit.fromFile(HEAD);
-        for (String fileName: headCommit.fileMap.keySet()) {
-            if (!branchRef.fileMap.containsKey(fileName)) {
+        for (String fileName : headCommit.fileMap.keySet()) {
+            if (!newCommit.fileMap.containsKey(fileName)) {
                 File CWDFile = Utils.join(CWD, fileName);
                 CWDFile.delete();
             }
         }
+        clearStagingArea();
+
+        HEAD = commitId;
+    }
+
+    public void checkoutBranch(String branchName) {
+        checkoutBranch(Branch.getBranchRef(branchName));
         switchBranch(branchName);
     }
 
@@ -408,8 +407,8 @@ public class Repository implements Serializable {
         }
     }
 
-    public void reset() {
-
+    public void reset(String commitId) {
+        checkoutCommit(commitId);
     }
 
     public void merge() {
@@ -422,6 +421,16 @@ public class Repository implements Serializable {
     private void switchBranch(String branchName) {
         ACTIVE_BRANCH = branchName;
         HEAD = Branch.getBranchRef(branchName);
+    }
+
+    /**
+     * Remove all the files in the staging area
+     */
+    private void clearStagingArea() {
+        Utils.clearDirectory(TO_ADD_DIR);
+        Utils.clearDirectory(TO_REMOVE_DIR);
+        toAddNames.clear();
+        toRemoveNames.clear();
     }
 
 }

@@ -66,7 +66,7 @@ public class Main {
                 }
                 // Third case
                 if (args.length == 2) {
-                    repo.checkoutFile(args[1]);
+                    repo.checkoutBranch(args[1]);
                 }
                 break;
             case "branch":
@@ -74,7 +74,7 @@ public class Main {
                 repo.branch(branchName);
                 break;
             case "rm-branch":
-                // TODO
+                repo.removeBranch(args[1]);
                 break;
             case "reset":
                 // TODO
