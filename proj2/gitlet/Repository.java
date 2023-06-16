@@ -361,15 +361,30 @@ public class Repository implements Serializable {
         Utils.copyFile(commitFile, CWDFile);
     }
 
+    /**
+     * Takes all files in the commit at the head of the given branch, and puts them in the working directory,
+     * overwriting the versions of the files that are already there if they exist
+     */
     public void checkoutBranch(String branchName) {
         Branch branch = Branch.getBranch(branchName);
         // The branch's latest commit
         Commit branchRef = Commit.fromFile(branch.ref);
-        // fileMap has name as key and id as value
-        for (Map.Entry<String, String> entry: branchRef.fileMap.entrySet()) {
+        // Replace files in CWD with files in commit_files
+        for (Map.Entry<String, String> entry : branchRef.fileMap.entrySet()) {
             File CWDFile = Utils.join(CWD, entry.getKey());
             File committedFile = Utils.join(COMMIT_FILES_DIR, entry.getValue());
+            Utils.copyFile(CWDFile, committedFile);
         }
+
+        // Removing files that are tracked in the current branch, but not tracked in the checked-out branch.
+        Commit headCommit = Commit.fromFile(HEAD);
+        for (String fileName: headCommit.fileMap.keySet()) {
+            if (!branchRef.fileMap.containsKey(fileName)) {
+                File CWDFile = Utils.join(CWD, fileName);
+                CWDFile.delete();
+            }
+        }
+        switchBranch(branchName);
     }
 
     public void branch(String branchName) {
