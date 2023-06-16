@@ -75,9 +75,9 @@ public class Repository implements Serializable {
     public static final File REPO = Utils.join(GITLET_DIR, "repo");
 
     /**
-     * This object maps each sha-1 id to each file
+     * This object maps each sha-1 id to each file in the COMMIT_FILES_FOLDER
      */
-    private HashMap<String, File> commitFiles;
+    private HashMap<String, File> committedFiles;
 
     /**
      * This object maps branch name to its file
@@ -128,7 +128,7 @@ public class Repository implements Serializable {
         COMMIT_FILES_DIR.mkdirs();
 
         // Initialize all Hashsets and Hashmaps
-        commitFiles = new HashMap<>();
+        committedFiles = new HashMap<>();
         trackedFileNames = new HashSet<>();
         toAddNames = new HashSet<>();
         toRemoveNames = new HashSet<>();
@@ -163,7 +163,7 @@ public class Repository implements Serializable {
         File stageFile = Utils.join(TO_ADD_DIR, fileName);
 
         // If the content of this file is already in the commit, remove it from the staging area.
-        if (commitFiles.containsKey(fileKey)) {
+        if (committedFiles.containsKey(fileKey)) {
             stageFile.delete();
             return;
         }
@@ -200,7 +200,7 @@ public class Repository implements Serializable {
             Utils.copyFile(file, commitFile);
             // Stores fileName as a key and fileId as a value
             fileMap.put(file.getName(), fileId);
-            commitFiles.put(fileId, commitFile);
+            committedFiles.put(fileId, commitFile);
         }
 
         // Untrack all the files that are staged for removal
@@ -363,6 +363,13 @@ public class Repository implements Serializable {
 
     public void checkoutBranch(String branchName) {
         Branch branch = Branch.getBranch(branchName);
+        // The branch's latest commit
+        Commit branchRef = Commit.fromFile(branch.ref);
+        // fileMap has name as key and id as value
+        for (Map.Entry<String, String> entry: branchRef.fileMap.entrySet()) {
+            File CWDFile = Utils.join(CWD, entry.getKey());
+            File committedFile = Utils.join(COMMIT_FILES_DIR, entry.getValue());
+        }
     }
 
     public void branch(String branchName) {
@@ -378,7 +385,7 @@ public class Repository implements Serializable {
         if (branchName.equals(ACTIVE_BRANCH)) {
             throw Utils.error("Cannot remove the current branch.");
         }
-        File branchFile = BranchFiles.get(branchName);
+        File branchFile = branchFiles.get(branchName);
         if (branchFile.exists()) {
             branchFile.delete();
         } else {

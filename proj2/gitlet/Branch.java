@@ -39,11 +39,6 @@ public class Branch implements Serializable {
         return branch.ref;
     }
 
-    // TODO
-    public static Branch toBranchObject() {
-
-    }
-
 
     /** Gets the file version of the branch */
     public File getBranchFile() {
