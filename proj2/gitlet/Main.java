@@ -50,7 +50,7 @@ public class Main {
                 repo.globalLog();
                 break;
             case "find":
-                // TODO
+                repo.find(args[1]);
                 break;
             case "status":
                 repo.status();
@@ -77,7 +77,7 @@ public class Main {
                 repo.removeBranch(args[1]);
                 break;
             case "reset":
-                // TODO
+                repo.reset(args[1]);
                 break;
             case "merge":
                 // TODO
