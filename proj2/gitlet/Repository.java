@@ -80,6 +80,11 @@ public class Repository implements Serializable {
     private HashMap<String, File> commitFiles;
 
     /**
+     * Maps branch name to the branch's file
+     * */
+    private HashMap<String, File> BranchFiles;
+
+    /**
      * Keeps track of names of all the files that are being tracked
      */
     private HashSet<String> trackedFileNames;
@@ -333,8 +338,17 @@ public class Repository implements Serializable {
         newBranch.saveBranch();
     }
 
-    public void removeBranch() {
-
+    public void removeBranch(String branchName) {
+        if (branchName.equals(ACTIVE_BRANCH)) {
+            throw Utils.error("Cannot remove the current branch.");
+        }
+        File branchFile = BranchFiles.get(branchName);
+        if (branchFile.exists()) {
+            branchFile.delete();
+        }
+        else {
+            throw Utils.error("A branch with that name does not exist.");
+        }
     }
 
     public void reset() {
