@@ -11,10 +11,14 @@ public class Branch implements Serializable {
     /** A reference to the latest commit in the branch */
     String ref;
 
+    /** The branch file */
+    File branchFile;
+
     /** Creates a branch with a reference to the latest commit */
     public Branch(String name, String ref) {
         this.name = name;
         this.ref = ref;
+        this.branchFile = Utils.join(Repository.BRANCHES_DIR, name);
     }
 
     // Saves the current branch into branches directory
@@ -33,6 +37,17 @@ public class Branch implements Serializable {
     public static String getBranchRef(String branchName) {
         Branch branch = getBranch(branchName);
         return branch.ref;
+    }
+
+    // TODO
+    public static Branch toBranchObject() {
+
+    }
+
+
+    /** Gets the file version of the branch */
+    public File getBranchFile() {
+        return branchFile;
     }
 
 

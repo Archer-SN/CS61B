@@ -80,9 +80,9 @@ public class Repository implements Serializable {
     private HashMap<String, File> commitFiles;
 
     /**
-     * Maps branch name to the branch's file
-     * */
-    private HashMap<String, File> BranchFiles;
+     * This object maps branch name to its file
+     */
+    private HashMap<String, File> branchFiles;
 
     /**
      * Keeps track of names of all the files that are being tracked
@@ -306,6 +306,37 @@ public class Repository implements Serializable {
     }
 
     public void status() {
+        // Header for branches
+        System.out.println("=== Branches ===");
+
+        for (String branchName : branchFiles.keySet()) {
+            // Add asterisk to the front if the branch is the active branch
+            if (branchName.equals(ACTIVE_BRANCH)) {
+                System.out.print("*");
+            }
+            System.out.println(branchName);
+        }
+
+        // Header for Staged Files
+        System.out.println("=== Staged Files ===");
+        for (String fileName : toAddNames) {
+            System.out.println(fileName);
+        }
+
+        // Header for Removed Files
+        System.out.println("=== Removed Files ===");
+        for (String fileName : toRemoveNames) {
+            System.out.println(fileName);
+        }
+
+        // Header for Modifications not Staged for commit
+        System.out.println("=== Modifications Not Staged For Commit ===");
+        // TODO: Bonus points
+
+        // Header for Untracked Files
+        System.out.println("=== Untracked Files ===");
+        // TODO: Bonus points
+
     }
 
     /**
@@ -331,11 +362,16 @@ public class Repository implements Serializable {
     }
 
     public void checkoutBranch(String branchName) {
+        Branch branch = Branch.getBranch(branchName);
     }
 
     public void branch(String branchName) {
         Branch newBranch = new Branch(branchName, HEAD);
         newBranch.saveBranch();
+
+        File branchFile = newBranch.getBranchFile();
+        // Maps the branchName to its file
+        branchFiles.put(branchName, branchFile);
     }
 
     public void removeBranch(String branchName) {
@@ -345,8 +381,7 @@ public class Repository implements Serializable {
         File branchFile = BranchFiles.get(branchName);
         if (branchFile.exists()) {
             branchFile.delete();
-        }
-        else {
+        } else {
             throw Utils.error("A branch with that name does not exist.");
         }
     }

@@ -53,7 +53,7 @@ public class Main {
                 // TODO
                 break;
             case "status":
-                // TODO
+                repo.status();
                 break;
             case "checkout":
                 // First case
@@ -70,7 +70,8 @@ public class Main {
                 }
                 break;
             case "branch":
-                // TODO
+                String branchName = args[1];
+                repo.branch(branchName);
                 break;
             case "rm-branch":
                 // TODO
