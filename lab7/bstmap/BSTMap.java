@@ -37,6 +37,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
     private BSTMap<K, V> left;
     private BSTMap<K, V> right;
 
+    // A constructor for BSTMap
     public BSTMap() {
         size = 0;
         node = null;
@@ -44,6 +45,9 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
         right = null;
     }
 
+    /**
+     * Prints all the keys and values in tree in order
+     */
     private void printInOrder(BSTMap<K, V> T) {
         if (T == null || T.node == null) {
             return;
