@@ -400,19 +400,29 @@ public class Repository implements Serializable {
             throw Utils.error("Cannot remove the current branch.");
         }
         File branchFile = branchFiles.get(branchName);
-        if (branchFile.exists()) {
+        if (branchFiles.containsKey(branchName)) {
             branchFile.delete();
         } else {
             throw Utils.error("A branch with that name does not exist.");
         }
     }
 
+    /**
+     * Checks out all the files tracked by the given commit.
+     * Removes tracked files that are not present in that commit.
+     * Also moves the current branch’s head to that commit node
+     */
     public void reset(String commitId) {
         checkoutCommit(commitId);
     }
 
-    public void merge() {
-
+    /**
+     * Merges files from the given branch into the current branch.
+     */
+    public void merge(String branchName) {
+        Branch branch = Branch.getBranch(branchName);
+        Branch activeBranch = Branch.getBranch(ACTIVE_BRANCH);
+        activeBranch.findLatestCommonAncestor(branch);
     }
 
     /**

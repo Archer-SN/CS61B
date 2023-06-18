@@ -47,7 +47,9 @@ public class Commit implements Serializable {
      */
     String message;
 
-    /** A map of file names to ids */
+    /**
+     * A map of file names to ids
+     */
     TreeMap<String, String> fileMap;
 
     // Initial commit
@@ -87,7 +89,9 @@ public class Commit implements Serializable {
         Utils.writeObject(commitFile, this);
     }
 
-    /** Prints the commit info with the format like below  */
+    /**
+     * Prints the commit info with the format like below
+     */
     public void printInfo() {
         Formatter formatter = new Formatter();
         System.out.println("===");
@@ -99,5 +103,19 @@ public class Commit implements Serializable {
         System.out.println();
         // Closing a formatter allows it to release resources it may be holding (such as open files).
         formatter.close();
+    }
+
+    /**
+     * Finds the latest common ancestor of two commits
+     */
+    public static String findLatestCommonAncestor(String commit1Id, String commit2Id) {
+        Commit commit1 = fromFile(commit1Id);
+        Commit commit2 = fromFile(commit2Id);
+        if (commit1.parent.equals(commit2.parent)) {
+            return commit1.parent;
+        }
+        else {
+            return findLatestCommonAncestor(commit1.parent, commit2.parent);
+        }
     }
 }
