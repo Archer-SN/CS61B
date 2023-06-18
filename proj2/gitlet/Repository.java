@@ -422,7 +422,7 @@ public class Repository implements Serializable {
     public void merge(String branchName) {
         Branch branch = Branch.getBranch(branchName);
         Branch activeBranch = Branch.getBranch(ACTIVE_BRANCH);
-        activeBranch.findLatestCommonAncestor(branch);
+        String commitId = activeBranch.findLatestCommonAncestor(branch);
     }
 
     /**

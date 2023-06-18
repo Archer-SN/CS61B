@@ -28,7 +28,7 @@ public class Commit implements Serializable {
 
 
     /**
-     * A pointer that points to the parent commit
+     * The parent commit id
      */
     String parent;
 
@@ -113,8 +113,7 @@ public class Commit implements Serializable {
         Commit commit2 = fromFile(commit2Id);
         if (commit1.parent.equals(commit2.parent)) {
             return commit1.parent;
-        }
-        else {
+        } else {
             return findLatestCommonAncestor(commit1.parent, commit2.parent);
         }
     }
