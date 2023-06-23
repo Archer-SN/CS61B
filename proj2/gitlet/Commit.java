@@ -31,6 +31,7 @@ public class Commit implements Serializable {
      * The parent commit id
      */
     String parent;
+    String[] children;
 
     /**
      * The id of this comment in the form of a strong from SHA-1 hash

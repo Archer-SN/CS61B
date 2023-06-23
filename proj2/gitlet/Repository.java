@@ -12,7 +12,7 @@ import java.util.*;
  *  TODO: It's a good idea to give a description here of what else this Class
  *  does at a high level.
  *
- * @author TODO
+ * @author Archer-SN
  */
 public class Repository implements Serializable {
     /**
@@ -75,14 +75,14 @@ public class Repository implements Serializable {
     public static final File REPO = Utils.join(GITLET_DIR, "repo");
 
     /**
-     * This object maps each sha-1 id to each file in the COMMIT_FILES_FOLDER
+     * This object contains SHA-1 id of all the files in the COMMIT_FILES_FOLDER
      */
-    private HashMap<String, File> committedFiles;
+    private HashSet<String> committedFilesId;
 
     /**
-     * This object maps branch name to its file
+     * This object contains all the names of the branch that exist
      */
-    private HashMap<String, File> branchFiles;
+    private HashSet<String> branchNames;
 
     /**
      * Keeps track of names of all the files that are being tracked
@@ -128,7 +128,7 @@ public class Repository implements Serializable {
         COMMIT_FILES_DIR.mkdirs();
 
         // Initialize all Hashsets and Hashmaps
-        committedFiles = new HashMap<>();
+        committedFilesId = new HashSet<>();
         trackedFileNames = new HashSet<>();
         toAddNames = new HashSet<>();
         toRemoveNames = new HashSet<>();
@@ -163,7 +163,7 @@ public class Repository implements Serializable {
         File stageFile = Utils.join(TO_ADD_DIR, fileName);
 
         // If the content of this file is already in the commit, remove it from the staging area.
-        if (committedFiles.containsKey(fileKey)) {
+        if (committedFilesId.contains(fileKey)) {
             stageFile.delete();
             return;
         }
@@ -200,7 +200,7 @@ public class Repository implements Serializable {
             Utils.copyFile(file, commitFile);
             // Stores fileName as a key and fileId as a value
             fileMap.put(file.getName(), fileId);
-            committedFiles.put(fileId, commitFile);
+            committedFilesId.add(fileId);
         }
 
         // Untrack all the files that are staged for removal
@@ -392,15 +392,15 @@ public class Repository implements Serializable {
 
         File branchFile = newBranch.getBranchFile();
         // Maps the branchName to its file
-        branchFiles.put(branchName, branchFile);
+        branchNames.add(branchName);
     }
 
     public void removeBranch(String branchName) {
         if (branchName.equals(ACTIVE_BRANCH)) {
             throw Utils.error("Cannot remove the current branch.");
         }
-        File branchFile = branchFiles.get(branchName);
-        if (branchFiles.containsKey(branchName)) {
+        File branchFile = Utils.join(BRANCHES_DIR, branchName);
+        if (branchNames.contains(branchName)) {
             branchFile.delete();
         } else {
             throw Utils.error("A branch with that name does not exist.");
