@@ -23,11 +23,19 @@ public class Branch implements Serializable {
     File branchFile;
 
     /**
+     * The id of the commit that is a split point
+     * A split point is created if a new branch is created.
+     */
+    String splitPoint;
+
+
+    /**
      * Creates a branch with a reference to the latest commit
      */
     public Branch(String name, String ref) {
         this.name = name;
         this.ref = ref;
+        this.splitPoint = ref;
         this.branchFile = Utils.join(Repository.BRANCHES_DIR, name);
     }
 
