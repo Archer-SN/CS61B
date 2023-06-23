@@ -413,7 +413,9 @@ public class Repository implements Serializable {
      * Also moves the current branch’s head to that commit node
      */
     public void reset(String commitId) {
+        Branch branch = Branch.getBranch(ACTIVE_BRANCH);
         checkoutCommit(commitId);
+        branch.setRef(commitId);
     }
 
     /**
@@ -422,7 +424,6 @@ public class Repository implements Serializable {
     public void merge(String branchName) {
         Branch branch = Branch.getBranch(branchName);
         Branch activeBranch = Branch.getBranch(ACTIVE_BRANCH);
-        String commitId = activeBranch.findLatestCommonAncestor(branch);
     }
 
     /**

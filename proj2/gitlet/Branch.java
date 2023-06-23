@@ -62,19 +62,24 @@ public class Branch implements Serializable {
     }
 
     /**
-     * Find the latest commit that is both in the current and the given branch
-     */
-    public String findLatestCommonAncestor(Branch branch) {
-        return Commit.findLatestCommonAncestor(this.ref, branch.ref);
-    }
-
-
-    /**
      * Gets the file version of the branch
      */
     public File getBranchFile() {
         return branchFile;
     }
 
+
+    /**
+     * Given a split point id, make the current split point equal to this id.
+     */
+    public void setSplitPoint(String splitPointId) {
+        splitPoint = splitPointId;
+    }
+
+
+    /** Change the latest commit in the branch */
+    public void setRef(String commitId) {
+        ref = commitId;
+    }
 
 }
