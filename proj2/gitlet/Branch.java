@@ -24,18 +24,16 @@ public class Branch implements Serializable {
      */
     File branchFile;
 
-    /**
-     * The id of the commit that is a split point
-     * A split point is created if a new branch is created.
-     */
-    String splitPoint;
-
 
     /**
-     * Map each commit id to its index in the commit history
+     * An array of all the commits that are made in this branch
      */
-    HashMap<String, Integer> commitHistory;
+    ArrayDeque<String> commitHistory;
 
+    /**
+     * Number of total commits in the branch
+     */
+    int branchSize;
 
     /**
      * Creates a branch with a reference to the latest commit
@@ -43,7 +41,17 @@ public class Branch implements Serializable {
     public Branch(String name, String ref) {
         this.name = name;
         this.ref = ref;
-        this.splitPoint = ref;
+        this.branchFile = Utils.join(Repository.BRANCHES_DIR, name);
+    }
+
+    /**
+     * Creates a branch with a reference to the latest commit
+     * Copies the commit history from the previous branch
+     */
+    public Branch(String name, String ref, Branch previousBranch) {
+        this.name = name;
+        this.ref = ref;
+        this.commitHistory = previousBranch.commitHistory.clone();
         this.branchFile = Utils.join(Repository.BRANCHES_DIR, name);
     }
 
@@ -69,6 +77,15 @@ public class Branch implements Serializable {
         return branch.ref;
     }
 
+
+    /**
+     * Finds the latest common ancestor between two branches
+     */
+    public static String findLatestCommonAncestor(String branch1Name, String branch2Name) {
+        Branch branch1 = getBranch(branch1Name);
+        Branch branch2 = getBranch(branch2Name);
+    }
+
     /**
      * Gets the file version of the branch
      */
@@ -88,24 +105,12 @@ public class Branch implements Serializable {
 
 
     /**
-     * Given a split point id, make the current split point equal to this id.
-     */
-    public void setSplitPoint(String splitPointId) {
-        splitPoint = splitPointId;
-    }
-
-
-    /**
      * Change the latest commit in the branch
      */
     public void setRef(String commitId) {
         ref = commitId;
         int newRefIndex = commitHistory.get(commitId);
-        int splitPointIndex = commitHistory.get(splitPoint);
-        // If we reset to the commit that comes before the split point, we set this new commit as the new split point
-        if (newRefIndex < splitPointIndex) {
-            setSplitPoint(commitId);
-        }
     }
+
 
 }

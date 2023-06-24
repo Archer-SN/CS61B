@@ -308,7 +308,7 @@ public class Repository implements Serializable {
         // Header for branches
         System.out.println("=== Branches ===");
 
-        for (String branchName : branchFiles.keySet()) {
+        for (String branchName : branchNames) {
             // Add asterisk to the front if the branch is the active branch
             if (branchName.equals(ACTIVE_BRANCH)) {
                 System.out.print("*");
@@ -427,8 +427,11 @@ public class Repository implements Serializable {
      * Merges files from the given branch into the current branch.
      */
     public void merge(String branchName) {
-        Branch branch = Branch.getBranch(branchName);
+        Branch givenBranch = Branch.getBranch(branchName);
         Branch activeBranch = Branch.getBranch(ACTIVE_BRANCH);
+        if (givenBranch.ref.equals(givenBranch)) {
+
+        }
     }
 
     /**
