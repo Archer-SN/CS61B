@@ -213,8 +213,13 @@ public class Repository implements Serializable {
 
         clearStagingArea();
 
-        // Points HEAD to the latest commit in the branch
+        // Points HEAD to this new commit
         HEAD = newCommit.id;
+
+        // Adds this new commit to the branch history and set the new latest commit
+        Branch activeBranch = Branch.getBranch(ACTIVE_BRANCH);
+        activeBranch.addCommit(newCommit.id);
+
     }
 
     /**

@@ -2,6 +2,8 @@ package gitlet;
 
 import java.io.Serializable;
 import java.io.File;
+import java.util.ArrayDeque;
+import java.util.HashMap;
 
 /**
  * Represent gitlet branch object
@@ -27,6 +29,12 @@ public class Branch implements Serializable {
      * A split point is created if a new branch is created.
      */
     String splitPoint;
+
+
+    /**
+     * Map each commit id to its index in the commit history
+     */
+    HashMap<String, Integer> commitHistory;
 
 
     /**
@@ -70,6 +78,16 @@ public class Branch implements Serializable {
 
 
     /**
+     * Add the commit to the commit history
+     * Set the latest commit in the branch to be this new commit
+     */
+    public void addCommit(String commitId) {
+        commitHistory.put(commitId, commitHistory.size());
+        setRef(commitId);
+    }
+
+
+    /**
      * Given a split point id, make the current split point equal to this id.
      */
     public void setSplitPoint(String splitPointId) {
@@ -77,9 +95,17 @@ public class Branch implements Serializable {
     }
 
 
-    /** Change the latest commit in the branch */
+    /**
+     * Change the latest commit in the branch
+     */
     public void setRef(String commitId) {
         ref = commitId;
+        int newRefIndex = commitHistory.get(commitId);
+        int splitPointIndex = commitHistory.get(splitPoint);
+        // If we reset to the commit that comes before the split point, we set this new commit as the new split point
+        if (newRefIndex < splitPointIndex) {
+            setSplitPoint(commitId);
+        }
     }
 
 }
