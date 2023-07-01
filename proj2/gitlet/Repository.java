@@ -446,8 +446,23 @@ public class Repository implements Serializable {
 
         // A map of name and id of files that will be checked
         TreeMap<String, String> toCheckFileId = (TreeMap<String, String>) givenCommit.fileIdMap.clone();
+        toCheckFileId.putAll(currentCommit.fileIdMap);
+        toCheckFileId.putAll(splitPointCommit.fileIdMap);
 
         for (String fileName: toCheckFileId.keySet()) {
+            // Getting different versions of the file from 3 different commits
+            File givenCommitFile = Utils.join(COMMIT_FILES_DIR, givenCommit.fileIdMap.get(fileName));
+            File currentCommitFile = Utils.join(COMMIT_FILES_DIR, currentCommit.fileIdMap.get(fileName));
+            File splitPointCommitFile = Utils.join(COMMIT_FILES_DIR, splitPointCommit.fileIdMap.get(fileName));
+
+            // Case 4
+            if (!splitPointCommitFile.exists() && !givenCommitFile.exists() && currentCommitFile.exists()) {
+                continue;
+            }
+            // Case 5
+            else if (!splitPointCommitFile.exists() && givenCommitFile.exists() && !currentCommitFile.exists()) {
+                checkoutFile();
+            }
 
         }
     }
@@ -470,4 +485,11 @@ public class Repository implements Serializable {
         toRemoveNames.clear();
     }
 
+    // TODO
+    private void stage() {}
+
+    // TODO
+    private void unstage() {
+
+    }
 }
