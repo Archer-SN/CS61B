@@ -2,8 +2,7 @@ package gitlet;
 
 import java.io.Serializable;
 import java.io.File;
-import java.util.ArrayDeque;
-import java.util.HashMap;
+import java.util.ArrayList;
 
 /**
  * Represent gitlet branch object
@@ -26,14 +25,9 @@ public class Branch implements Serializable {
 
 
     /**
-     * An array of all the commits that are made in this branch
+     * A list of all the commits that are made in this branch
      */
-    ArrayDeque<String> commitHistory;
-
-    /**
-     * Number of total commits in the branch
-     */
-    int branchSize;
+    ArrayList<String> commitHistory;
 
     /**
      * Creates a branch with a reference to the latest commit
@@ -51,7 +45,7 @@ public class Branch implements Serializable {
     public Branch(String name, String ref, Branch previousBranch) {
         this.name = name;
         this.ref = ref;
-        this.commitHistory = previousBranch.commitHistory.clone();
+        this.commitHistory = (ArrayList<String>) previousBranch.commitHistory.clone();
         this.branchFile = Utils.join(Repository.BRANCHES_DIR, name);
     }
 
@@ -84,6 +78,17 @@ public class Branch implements Serializable {
     public static String findLatestCommonAncestor(String branch1Name, String branch2Name) {
         Branch branch1 = getBranch(branch1Name);
         Branch branch2 = getBranch(branch2Name);
+        // All branches have one same common ancestor which is the initial commit
+        String latestCommonAncestor = null;
+        for (int i = 0; i < branch1.commitHistory.size(); i++) {
+            String branch1Commit = branch1.commitHistory.get(i);
+            String branch2Commit = branch2.commitHistory.get(i);
+            // If the two branches have the same ancestor
+            if (branch1Commit.equals(branch2Commit)) {
+                latestCommonAncestor = branch1Commit;
+            }
+        }
+        return latestCommonAncestor;
     }
 
     /**
@@ -99,7 +104,7 @@ public class Branch implements Serializable {
      * Set the latest commit in the branch to be this new commit
      */
     public void addCommit(String commitId) {
-        commitHistory.put(commitId, commitHistory.size());
+        commitHistory.add(commitId);
         setRef(commitId);
     }
 
@@ -109,7 +114,6 @@ public class Branch implements Serializable {
      */
     public void setRef(String commitId) {
         ref = commitId;
-        int newRefIndex = commitHistory.get(commitId);
     }
 
 
