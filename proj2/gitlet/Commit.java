@@ -51,7 +51,7 @@ public class Commit implements Serializable {
     /**
      * A map of file names to ids
      */
-    TreeMap<String, String> fileMap;
+    TreeMap<String, String> fileIdMap;
 
     // Initial commit
     public Commit() {
@@ -59,7 +59,7 @@ public class Commit implements Serializable {
         id = Utils.sha1(Utils.serialize(this));
         timestamp = new Date(0);
         // Creates an empty map
-        fileMap = new TreeMap<String, String>();
+        fileIdMap = new TreeMap<String, String>();
         // Initial message
         message = "initial commit";
     }
@@ -67,7 +67,7 @@ public class Commit implements Serializable {
     public Commit(String message, TreeMap<String, String> fileMap, String parentCommit) {
         this.timestamp = new Date();
         this.message = message;
-        this.fileMap = fileMap;
+        this.fileIdMap = fileMap;
         this.parent = parentCommit;
         // Creates a new id for this commit
         this.id = Utils.sha1(Utils.serialize(this));
@@ -104,18 +104,5 @@ public class Commit implements Serializable {
         System.out.println();
         // Closing a formatter allows it to release resources it may be holding (such as open files).
         formatter.close();
-    }
-
-    /**
-     * Finds the latest common ancestor of two commits
-     */
-    public static String findLatestCommonAncestor(String commit1Id, String commit2Id) {
-        Commit commit1 = fromFile(commit1Id);
-        Commit commit2 = fromFile(commit2Id);
-        if (commit1.parent.equals(commit2.parent)) {
-            return commit1.parent;
-        } else {
-            return findLatestCommonAncestor(commit1.parent, commit2.parent);
-        }
     }
 }

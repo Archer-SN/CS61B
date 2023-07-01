@@ -1,7 +1,5 @@
 package gitlet;
 
-import jdk.jshell.execution.Util;
-
 import java.io.File;
 import java.io.Serializable;
 import java.util.*;
@@ -187,7 +185,7 @@ public class Repository implements Serializable {
         Commit prevCommit = Commit.fromFile(HEAD);
         // A tree map with keys as name and values as sha-1 id
         // We get tracked files from the previous commit
-        TreeMap<String, String> fileMap = prevCommit.fileMap;
+        TreeMap<String, String> fileMap = prevCommit.fileIdMap;
         // Names of the files that are staged for addition
         File[] toAddFiles = TO_ADD_DIR.listFiles();
         File[] toRemoveFiles = TO_REMOVE_DIR.listFiles();
@@ -354,7 +352,7 @@ public class Repository implements Serializable {
      */
     public void checkoutFile(String commitId, String fileName) {
         Commit commit = Commit.fromFile(commitId);
-        String fileId = commit.fileMap.get(fileName);
+        String fileId = commit.fileIdMap.get(fileName);
         File commitFile = Utils.join(COMMIT_FILES_DIR, fileId);
         File CWDFile = Utils.join(CWD, fileName);
         Utils.copyFile(commitFile, CWDFile);
@@ -367,7 +365,7 @@ public class Repository implements Serializable {
     public void checkoutCommit(String commitId) {
         Commit newCommit = Commit.fromFile(commitId);
         // Replace files in CWD with files in commit_files
-        for (Map.Entry<String, String> entry : newCommit.fileMap.entrySet()) {
+        for (Map.Entry<String, String> entry : newCommit.fileIdMap.entrySet()) {
             File CWDFile = Utils.join(CWD, entry.getKey());
             File committedFile = Utils.join(COMMIT_FILES_DIR, entry.getValue());
             Utils.copyFile(CWDFile, committedFile);
@@ -375,8 +373,8 @@ public class Repository implements Serializable {
 
         // Removing files that are tracked in the current commit, but not tracked in the new commit.
         Commit headCommit = Commit.fromFile(HEAD);
-        for (String fileName : headCommit.fileMap.keySet()) {
-            if (!newCommit.fileMap.containsKey(fileName)) {
+        for (String fileName : headCommit.fileIdMap.keySet()) {
+            if (!newCommit.fileIdMap.containsKey(fileName)) {
                 File CWDFile = Utils.join(CWD, fileName);
                 CWDFile.delete();
             }
@@ -429,7 +427,27 @@ public class Repository implements Serializable {
     public void merge(String branchName) {
         Branch givenBranch = Branch.getBranch(branchName);
         Branch activeBranch = Branch.getBranch(ACTIVE_BRANCH);
-        if (givenBranch.ref.equals(givenBranch)) {
+        String splitPoint = Branch.findLatestCommonAncestor(givenBranch, activeBranch);
+        // Do nothing if the split point is equal to the latest commit in the given branch
+        if (givenBranch.ref.equals(splitPoint)) {
+            System.out.println("Given branch is an ancestor of the current branch.");
+            return;
+        }
+        // If the split point is the current active branch, checkout to the given branch
+        else if (activeBranch.ref.equals(splitPoint)) {
+            checkoutBranch(branchName);
+            System.out.println("Current branch fast-forwarded.");
+            return;
+        }
+
+        Commit givenCommit = Commit.fromFile(givenBranch.ref);
+        Commit currentCommit = Commit.fromFile(activeBranch.ref);
+        Commit splitPointCommit = Commit.fromFile(splitPoint);
+
+        // A map of name and id of files that will be checked
+        TreeMap<String, String> toCheckFileId = (TreeMap<String, String>) givenCommit.fileIdMap.clone();
+
+        for (String fileName: toCheckFileId.keySet()) {
 
         }
     }
