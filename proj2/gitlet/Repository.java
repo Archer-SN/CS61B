@@ -449,21 +449,58 @@ public class Repository implements Serializable {
         toCheckFileId.putAll(currentCommit.fileIdMap);
         toCheckFileId.putAll(splitPointCommit.fileIdMap);
 
-        for (String fileName: toCheckFileId.keySet()) {
-            // Getting different versions of the file from 3 different commits
-            File givenCommitFile = Utils.join(COMMIT_FILES_DIR, givenCommit.fileIdMap.get(fileName));
-            File currentCommitFile = Utils.join(COMMIT_FILES_DIR, currentCommit.fileIdMap.get(fileName));
-            File splitPointCommitFile = Utils.join(COMMIT_FILES_DIR, splitPointCommit.fileIdMap.get(fileName));
+        boolean hasConflict = false;
 
+        for (String fileName : toCheckFileId.keySet()) {
+            // Get the sha-1 id of each file
+            String givenCommitFileId = givenCommit.fileIdMap.get(fileName);
+            String currentCommitFileId = currentCommit.fileIdMap.get(fileName);
+            String splitPointCommitFileId = splitPointCommit.fileIdMap.get(fileName);
+            // Getting different versions of the file from 3 different commits
+            File givenCommitFile = Utils.join(COMMIT_FILES_DIR, givenCommitFileId);
+            File currentCommitFile = Utils.join(COMMIT_FILES_DIR, currentCommitFileId);
+            File splitPointCommitFile = Utils.join(COMMIT_FILES_DIR, splitPointCommitFileId);
+            // Case 1
+            if (!givenCommitFileId.equals(splitPointCommitFileId) && splitPointCommitFileId.equals(currentCommitFileId)) {
+                checkoutFile(givenCommit.id, fileName);
+                add(fileName);
+            }
+            // Case 2
+            else if (!currentCommitFileId.equals(splitPointCommitFileId) && givenCommitFileId.equals(splitPointCommitFileId)) {
+                continue;
+            }
+            // Case 3
+            else if (givenCommitFileId.equals(currentCommitFileId)) {
+                continue;
+            }
             // Case 4
-            if (!splitPointCommitFile.exists() && !givenCommitFile.exists() && currentCommitFile.exists()) {
+            else if (!splitPointCommitFile.exists() && !givenCommitFile.exists() && currentCommitFile.exists()) {
                 continue;
             }
             // Case 5
             else if (!splitPointCommitFile.exists() && givenCommitFile.exists() && !currentCommitFile.exists()) {
-                checkoutFile();
+                checkoutFile(fileName, givenCommit.id);
+                add(fileName);
             }
-
+            // Case 6
+            else if (splitPointCommitFile.exists() && currentCommitFileId.equals(splitPointCommitFileId) && !givenCommitFile.exists()) {
+                remove(fileName);
+            }
+            // Case 7
+            else if (splitPointCommitFile.exists() && givenCommitFileId.equals(splitPointCommitFileId) && !currentCommitFile.exists()) {
+                continue;
+            }
+            // Case 8
+            else if (!givenCommitFileId.equals(currentCommitFileId)) {
+                hasConflict = true;
+                File cwdFile = Utils.join(CWD, fileName);
+                Utils.writeContents(cwdFile, "<<<<<<< HEAD\n", Utils.readContents(currentCommitFile), "=======\n", Utils.readContents(givenCommitFile), ">>>>>>>\n");
+                add(fileName);
+            }
+        }
+        commit(String.format("Merged %s into %s.", givenBranch.name, activeBranch.name));
+        if (hasConflict) {
+            System.out.println("Encountered a merge conflict");
         }
     }
 
@@ -483,13 +520,5 @@ public class Repository implements Serializable {
         Utils.clearDirectory(TO_REMOVE_DIR);
         toAddNames.clear();
         toRemoveNames.clear();
-    }
-
-    // TODO
-    private void stage() {}
-
-    // TODO
-    private void unstage() {
-
     }
 }

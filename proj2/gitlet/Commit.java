@@ -49,7 +49,7 @@ public class Commit implements Serializable {
     String message;
 
     /**
-     * A map of file names to ids
+     * A map of file names to sha1 ids
      */
     TreeMap<String, String> fileIdMap;
 
