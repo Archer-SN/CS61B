@@ -80,7 +80,7 @@ public class Main {
                 repo.reset(args[1]);
                 break;
             case "merge":
-                // TODO
+                repo.merge(args[1]);
                 break;
             default:
                 throw Utils.error("No command with that name exists");

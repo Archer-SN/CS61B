@@ -36,6 +36,7 @@ public class Branch implements Serializable {
         this.name = name;
         this.ref = ref;
         this.branchFile = Utils.join(Repository.BRANCHES_DIR, name);
+        this.commitHistory = new ArrayList<String>();
     }
 
     /**
