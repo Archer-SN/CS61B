@@ -6,7 +6,7 @@ import javax.sound.midi.SysexMessage;
 /**
  * Driver class for Gitlet, a subset of the Git version-control system.
  *
- * @author TODO
+ * @author Archer
  */
 public class Main {
 

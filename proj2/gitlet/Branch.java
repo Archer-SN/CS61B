@@ -3,11 +3,16 @@ package gitlet;
 import java.io.Serializable;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  * Represent gitlet branch object
  */
 public class Branch implements Serializable {
+    /**
+     * This object contains all the names of the branch that exist
+     */
+    public static HashSet<String> branchNames;
 
     /**
      * The branch's name
@@ -37,6 +42,7 @@ public class Branch implements Serializable {
         this.ref = ref;
         this.branchFile = Utils.join(Repository.BRANCHES_DIR, name);
         this.commitHistory = new ArrayList<String>();
+        branchNames.add(name);
     }
 
     /**
@@ -48,6 +54,7 @@ public class Branch implements Serializable {
         this.ref = ref;
         this.commitHistory = (ArrayList<String>) previousBranch.commitHistory.clone();
         this.branchFile = Utils.join(Repository.BRANCHES_DIR, name);
+        branchNames.add(name);
     }
 
     // Saves the current branch into branches directory
@@ -114,6 +121,5 @@ public class Branch implements Serializable {
     public void setRef(String commitId) {
         ref = commitId;
     }
-
 
 }

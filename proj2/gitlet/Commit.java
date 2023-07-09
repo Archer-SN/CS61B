@@ -12,14 +12,12 @@ import static gitlet.Utils.join;
 
 /**
  * Represents a gitlet commit object.
- *  TODO: It's a good idea to give a description here of what else this Class
  *  does at a high level.
  *
- * @author TODO
+ * @author Archer
  */
 public class Commit implements Serializable {
     /**
-     * TODO: add instance variables here.
      *
      * List all instance variables of the Commit class here with a useful
      * comment above them describing what that variable represents and how that
@@ -97,7 +95,6 @@ public class Commit implements Serializable {
         Formatter formatter = new Formatter();
         System.out.println("===");
         System.out.println("commit " + id);
-        // TODO: Get a better way to format this
         System.out.println("Date: " + formatter.format("%ta %tb %te %tT %tY %tz",
                 timestamp, timestamp, timestamp, timestamp, timestamp, timestamp));
         System.out.println(message);

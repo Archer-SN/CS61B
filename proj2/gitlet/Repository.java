@@ -7,8 +7,7 @@ import java.util.*;
 
 /**
  * Represents a gitlet repository.
- *  TODO: It's a good idea to give a description here of what else this Class
- *  does at a high level.
+ * does at a high level.
  *
  * @author Archer-SN
  */
@@ -37,12 +36,12 @@ public class Repository implements Serializable {
     /**
      * The name of the branch that we are currently in
      */
-    public String ACTIVE_BRANCH;
+    private String ACTIVE_BRANCH;
 
     /**
      * A reference to the current commit that we are at
      */
-    public String HEAD;
+    private String HEAD;
 
     /**
      * The directory for TO_ADD and TO_REMOVE
@@ -77,10 +76,6 @@ public class Repository implements Serializable {
      */
     private HashSet<String> committedFilesId;
 
-    /**
-     * This object contains all the names of the branch that exist
-     */
-    private HashSet<String> branchNames;
 
     /**
      * Keeps track of names of all the files that are being tracked
@@ -178,7 +173,8 @@ public class Repository implements Serializable {
      */
     public void commit(String message) {
         // If there is no file in the staging area.
-        if (Objects.requireNonNull(TO_ADD_DIR.list()).length == 0 && Objects.requireNonNull(TO_REMOVE_DIR.list()).length == 0) {
+        if (Objects.requireNonNull(TO_ADD_DIR.list()).length == 0 &&
+                Objects.requireNonNull(TO_REMOVE_DIR.list()).length == 0) {
             throw Utils.error("No changes added to the commit");
         }
 
@@ -266,7 +262,6 @@ public class Repository implements Serializable {
     }
 
     /**
-     * TODO: Implement log for merge
      * Starting from the current commit, displays info about each
      * commit backwards along the commit tree until the initial commit
      */
@@ -306,7 +301,7 @@ public class Repository implements Serializable {
         // Header for branches
         System.out.println("=== Branches ===");
 
-        for (String branchName : branchNames) {
+        for (String branchName : Branch.branchNames) {
             // Add asterisk to the front if the branch is the active branch
             if (branchName.equals(ACTIVE_BRANCH)) {
                 System.out.print("*");
@@ -328,11 +323,9 @@ public class Repository implements Serializable {
 
         // Header for Modifications not Staged for commit
         System.out.println("=== Modifications Not Staged For Commit ===");
-        // TODO: Bonus points
 
         // Header for Untracked Files
         System.out.println("=== Untracked Files ===");
-        // TODO: Bonus points
 
     }
 
@@ -385,7 +378,7 @@ public class Repository implements Serializable {
     }
 
     public void checkoutBranch(String branchName) {
-        checkoutBranch(Branch.getBranchRef(branchName));
+        checkoutCommit(Branch.getBranchRef(branchName));
         switchBranch(branchName);
     }
 
@@ -394,8 +387,6 @@ public class Repository implements Serializable {
         newBranch.saveBranch();
 
         File branchFile = newBranch.getBranchFile();
-        // Maps the branchName to its file
-        branchNames.add(branchName);
     }
 
     public void removeBranch(String branchName) {
@@ -403,7 +394,7 @@ public class Repository implements Serializable {
             throw Utils.error("Cannot remove the current branch.");
         }
         File branchFile = Utils.join(BRANCHES_DIR, branchName);
-        if (branchNames.contains(branchName)) {
+        if (Branch.branchNames.contains(branchName)) {
             branchFile.delete();
         } else {
             throw Utils.error("A branch with that name does not exist.");
@@ -444,14 +435,14 @@ public class Repository implements Serializable {
         Commit currentCommit = Commit.fromFile(activeBranch.ref);
         Commit splitPointCommit = Commit.fromFile(splitPoint);
 
-        // A map of name and id of files that will be checked
-        TreeMap<String, String> toCheckFileId = (TreeMap<String, String>) givenCommit.fileIdMap.clone();
-        toCheckFileId.putAll(currentCommit.fileIdMap);
-        toCheckFileId.putAll(splitPointCommit.fileIdMap);
+        // A set of name of files that will be checked
+        HashSet<String> toCheckFileNames = new HashSet<String>(givenCommit.fileIdMap.keySet());
+        toCheckFileNames.addAll(currentCommit.fileIdMap.keySet());
+        toCheckFileNames.addAll(splitPointCommit.fileIdMap.keySet());
 
         boolean hasConflict = false;
 
-        for (String fileName : toCheckFileId.keySet()) {
+        for (String fileName : toCheckFileNames) {
             // Get the sha-1 id of each file
             String givenCommitFileId = givenCommit.fileIdMap.get(fileName);
             String currentCommitFileId = currentCommit.fileIdMap.get(fileName);
