@@ -12,7 +12,7 @@ public class Branch implements Serializable {
     /**
      * This object contains all the names of the branch that exist
      */
-    public static HashSet<String> branchNames;
+    public static HashSet<String> branchNames = new HashSet<String>();
 
     /**
      * The branch's name
