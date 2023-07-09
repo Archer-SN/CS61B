@@ -47,7 +47,7 @@ public class Commit implements Serializable {
     String message;
 
     /**
-     * A map of file names to sha1 ids
+     * A map of file names to sha1 ids (Tracked files)
      */
     TreeMap<String, String> fileIdMap;
 
@@ -101,5 +101,9 @@ public class Commit implements Serializable {
         System.out.println();
         // Closing a formatter allows it to release resources it may be holding (such as open files).
         formatter.close();
+    }
+
+    public void untrack(String fileName) {
+        // TODO
     }
 }

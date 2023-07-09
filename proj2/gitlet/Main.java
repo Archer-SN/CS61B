@@ -23,6 +23,9 @@ public class Main {
         if (!Repository.GITLET_DIR.exists() && !firstArg.equals("init")) {
             throw Utils.error("Not in an initialized Gitlet directory.");
         }
+        else if (Repository.GITLET_DIR.exists() && firstArg.equals("init")) {
+            throw Utils.error("A Gitlet version-control system already exists in the current directory.");
+        }
         switch (firstArg) {
             case "init":
                 repo = new Repository();
@@ -35,7 +38,7 @@ public class Main {
                 String message = args[1];
                 // Throws an error if no message is given
                 if (message.isEmpty()) {
-                    throw Utils.error("Please enter a commit message");
+                    throw Utils.error("Please enter a commit message.");
                 }
                 repo.commit(message);
                 break;

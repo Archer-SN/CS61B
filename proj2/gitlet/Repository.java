@@ -175,7 +175,7 @@ public class Repository implements Serializable {
         // If there is no file in the staging area.
         if (Objects.requireNonNull(TO_ADD_DIR.list()).length == 0 &&
                 Objects.requireNonNull(TO_REMOVE_DIR.list()).length == 0) {
-            throw Utils.error("No changes added to the commit");
+            throw Utils.error("No changes added to the commit.");
         }
 
         Commit prevCommit = Commit.fromFile(HEAD);
@@ -301,32 +301,42 @@ public class Repository implements Serializable {
         // Header for branches
         System.out.println("=== Branches ===");
 
-        for (String branchName : Branch.branchNames) {
+        for (String branchName : Branch.branchNames()) {
             // Add asterisk to the front if the branch is the active branch
             if (branchName.equals(ACTIVE_BRANCH)) {
                 System.out.print("*");
             }
             System.out.println(branchName);
         }
-
+        // Empty Line
+        System.out.println();
         // Header for Staged Files
         System.out.println("=== Staged Files ===");
         for (String fileName : toAddNames) {
             System.out.println(fileName);
         }
+        // Empty Line
+        System.out.println();
 
         // Header for Removed Files
         System.out.println("=== Removed Files ===");
         for (String fileName : toRemoveNames) {
             System.out.println(fileName);
         }
+        // Empty Line
+        System.out.println();
 
         // Header for Modifications not Staged for commit
         System.out.println("=== Modifications Not Staged For Commit ===");
 
+        // Empty Line
+        System.out.println();
+
         // Header for Untracked Files
         System.out.println("=== Untracked Files ===");
 
+        // Empty Line
+        System.out.println();
     }
 
     /**
@@ -394,7 +404,7 @@ public class Repository implements Serializable {
             throw Utils.error("Cannot remove the current branch.");
         }
         File branchFile = Utils.join(BRANCHES_DIR, branchName);
-        if (Branch.branchNames.contains(branchName)) {
+        if (Branch.exists(branchName)) {
             branchFile.delete();
         } else {
             throw Utils.error("A branch with that name does not exist.");
@@ -475,7 +485,7 @@ public class Repository implements Serializable {
             }
             // Case 6
             else if (splitPointCommitFile.exists() && currentCommitFileId.equals(splitPointCommitFileId) && !givenCommitFile.exists()) {
-                remove(fileName);
+                // TODO
             }
             // Case 7
             else if (splitPointCommitFile.exists() && givenCommitFileId.equals(splitPointCommitFileId) && !currentCommitFile.exists()) {
@@ -491,7 +501,7 @@ public class Repository implements Serializable {
         }
         commit(String.format("Merged %s into %s.", givenBranch.name, activeBranch.name));
         if (hasConflict) {
-            System.out.println("Encountered a merge conflict");
+            System.out.println("Encountered a merge conflict.");
         }
     }
 

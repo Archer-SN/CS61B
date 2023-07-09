@@ -10,11 +10,6 @@ import java.util.HashSet;
  */
 public class Branch implements Serializable {
     /**
-     * This object contains all the names of the branch that exist
-     */
-    public static HashSet<String> branchNames = new HashSet<String>();
-
-    /**
      * The branch's name
      */
     String name;
@@ -42,7 +37,6 @@ public class Branch implements Serializable {
         this.ref = ref;
         this.branchFile = Utils.join(Repository.BRANCHES_DIR, name);
         this.commitHistory = new ArrayList<String>();
-        branchNames.add(name);
     }
 
     /**
@@ -54,14 +48,8 @@ public class Branch implements Serializable {
         this.ref = ref;
         this.commitHistory = (ArrayList<String>) previousBranch.commitHistory.clone();
         this.branchFile = Utils.join(Repository.BRANCHES_DIR, name);
-        branchNames.add(name);
     }
 
-    // Saves the current branch into branches directory
-    public void saveBranch() {
-        File branchFile = Utils.join(Repository.BRANCHES_DIR, name);
-        Utils.writeObject(branchFile, this);
-    }
 
     /**
      * Given a branch name return a Branch object
@@ -95,6 +83,20 @@ public class Branch implements Serializable {
             }
         }
         return latestCommonAncestor;
+    }
+
+    public static String[] branchNames() {
+        return Repository.BRANCHES_DIR.list();
+    }
+
+    public static boolean exists(String branchName) {
+        return Utils.join(Repository.BRANCHES_DIR, branchName).exists();
+    }
+
+    // Saves the current branch into branches directory
+    public void saveBranch() {
+        File branchFile = Utils.join(Repository.BRANCHES_DIR, name);
+        Utils.writeObject(branchFile, this);
     }
 
     /**
