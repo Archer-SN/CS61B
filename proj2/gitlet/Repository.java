@@ -171,7 +171,7 @@ public class Repository implements Serializable {
      * Saves all the files in the staging area into COMMIT_FILES directory
      * A new commit is created
      */
-    public void commit(String message) {
+    public Commit commit(String message, TreeMap<String, String> fileIdMap) {
         // If there is no file in the staging area.
         if (Objects.requireNonNull(TO_ADD_DIR.list()).length == 0 &&
                 Objects.requireNonNull(TO_REMOVE_DIR.list()).length == 0) {
@@ -214,6 +214,12 @@ public class Repository implements Serializable {
         Branch activeBranch = Branch.getBranch(ACTIVE_BRANCH);
         activeBranch.addCommit(newCommit.id);
 
+        return newCommit;
+    }
+
+    public Commit commit(String message) {
+        Commit prevCommit = Commit.fromFile(HEAD);
+        return commit(message, prevCommit.fileIdMap);
     }
 
     /**
@@ -450,6 +456,9 @@ public class Repository implements Serializable {
         toCheckFileNames.addAll(currentCommit.fileIdMap.keySet());
         toCheckFileNames.addAll(splitPointCommit.fileIdMap.keySet());
 
+        // Will be passed into commit()
+        TreeMap<String, String> currentCommitFileIdMap = (TreeMap<String, String>) currentCommit.fileIdMap;
+
         boolean hasConflict = false;
 
         for (String fileName : toCheckFileNames) {
@@ -485,7 +494,8 @@ public class Repository implements Serializable {
             }
             // Case 6
             else if (splitPointCommitFile.exists() && currentCommitFileId.equals(splitPointCommitFileId) && !givenCommitFile.exists()) {
-                // TODO
+                remove(fileName);
+                currentCommitFileIdMap.remove(fileName);
             }
             // Case 7
             else if (splitPointCommitFile.exists() && givenCommitFileId.equals(splitPointCommitFileId) && !currentCommitFile.exists()) {
@@ -499,7 +509,7 @@ public class Repository implements Serializable {
                 add(fileName);
             }
         }
-        commit(String.format("Merged %s into %s.", givenBranch.name, activeBranch.name));
+        commit(String.format("Merged %s into %s.", givenBranch.name, activeBranch.name), currentCommitFileIdMap);
         if (hasConflict) {
             System.out.println("Encountered a merge conflict.");
         }

@@ -71,6 +71,7 @@ public class Branch implements Serializable {
     /**
      * Finds the latest common ancestor between two branches
      */
+    // TODO:  This might not work
     public static String findLatestCommonAncestor(Branch branch1, Branch branch2) {
         // All branches have one same common ancestor which is the initial commit
         String latestCommonAncestor = null;

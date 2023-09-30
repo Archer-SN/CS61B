@@ -102,8 +102,4 @@ public class Commit implements Serializable {
         // Closing a formatter allows it to release resources it may be holding (such as open files).
         formatter.close();
     }
-
-    public void untrack(String fileName) {
-        // TODO
-    }
 }
