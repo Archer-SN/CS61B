@@ -30,6 +30,13 @@ public class Branch implements Serializable {
     ArrayList<String> commitHistory;
 
     /**
+     * Creates an empty branch used for handling errors
+     */
+    public Branch() {
+        this.name = null;
+    }
+
+    /**
      * Creates a branch with a reference to the latest commit
      */
     public Branch(String name, String ref) {
@@ -56,7 +63,10 @@ public class Branch implements Serializable {
      */
     public static Branch getBranch(String branchName) {
         File branchFile = Utils.join(Repository.BRANCHES_DIR, branchName);
-        return Utils.readObject(branchFile, Branch.class);
+        if (branchFile.exists()) {
+            return Utils.readObject(branchFile, Branch.class);
+        }
+        return new Branch();
     }
 
     /**

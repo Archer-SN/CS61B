@@ -16,15 +16,15 @@ public class Main {
      */
     public static void main(String[] args) {
         if (args.length == 0) {
-            throw Utils.error("Please enter a command");
+            return System.out.println("Please enter a command");
         }
         String firstArg = args[0];
         Repository repo = Repository.getRepo();
         if (!Repository.GITLET_DIR.exists() && !firstArg.equals("init")) {
-            throw Utils.error("Not in an initialized Gitlet directory.");
+            return System.out.println("Not in an initialized Gitlet directory.");
         }
         else if (Repository.GITLET_DIR.exists() && firstArg.equals("init")) {
-            throw Utils.error("A Gitlet version-control system already exists in the current directory.");
+            return System.out.println("A Gitlet version-control system already exists in the current directory.");
         }
         switch (firstArg) {
             case "init":
@@ -38,7 +38,7 @@ public class Main {
                 String message = args[1];
                 // Throws an error if no message is given
                 if (message.isEmpty()) {
-                    throw Utils.error("Please enter a commit message.");
+                    return System.out.println("Please enter a commit message.");
                 }
                 repo.commit(message);
                 break;
@@ -86,7 +86,7 @@ public class Main {
                 repo.merge(args[1]);
                 break;
             default:
-                throw Utils.error("No command with that name exists");
+                return System.out.println("No command with that name exists");
         }
         repo.saveRepo();
     }

@@ -135,7 +135,7 @@ public class Repository implements Serializable {
         Branch masterBranch = new Branch("master", initialCommit.id);
         // Save the branch data into an actual file
         masterBranch.saveBranch();
-        switchBranch("master");
+        switchBranch(masterBranch);
         initialCommit.saveCommit();
     }
 
@@ -171,11 +171,12 @@ public class Repository implements Serializable {
      * Saves all the files in the staging area into COMMIT_FILES directory
      * A new commit is created
      */
-    public Commit commit(String message, TreeMap<String, String> fileIdMap) {
+    public void commit(String message, TreeMap<String, String> fileIdMap) {
         // If there is no file in the staging area.
         if (Objects.requireNonNull(TO_ADD_DIR.list()).length == 0 &&
                 Objects.requireNonNull(TO_REMOVE_DIR.list()).length == 0) {
-            throw Utils.error("No changes added to the commit.");
+            System.out.println("No changes added to the commit.");
+            return;
         }
 
         Commit prevCommit = Commit.fromFile(HEAD);
@@ -213,8 +214,6 @@ public class Repository implements Serializable {
         // Adds this new commit to the branch history and set the new latest commit
         Branch activeBranch = Branch.getBranch(ACTIVE_BRANCH);
         activeBranch.addCommit(newCommit.id);
-
-        return newCommit;
     }
 
     public Commit commit(String message) {
@@ -394,8 +393,14 @@ public class Repository implements Serializable {
     }
 
     public void checkoutBranch(String branchName) {
-        checkoutCommit(Branch.getBranchRef(branchName));
-        switchBranch(branchName);
+        // The latest commit in the branch
+        Branch targetBranch = Branch.getBranch(branchName);
+        if (targetBranch.ref == null) {
+            System.out.println("No such branch exists.");
+            return;
+        }
+        checkoutCommit(targetBranch.ref);
+        switchBranch(targetBranch);
     }
 
     public void branch(String branchName) {
@@ -518,9 +523,9 @@ public class Repository implements Serializable {
     /**
      * Moves the HEAD pointer and change the ACTIVE_BRANCH
      */
-    private void switchBranch(String branchName) {
-        ACTIVE_BRANCH = branchName;
-        HEAD = Branch.getBranchRef(branchName);
+    private void switchBranch(Branch newBranch) {
+        ACTIVE_BRANCH = newBranch.name;
+        HEAD = newBranch.ref;
     }
 
     /**
