@@ -147,7 +147,7 @@ public class Repository implements Serializable {
         File file = Utils.join(CWD, fileName);
 
         if (!file.exists()) {
-            throw Utils.error("File does not exist.");
+            System.out.println("File does not exist.");
         }
 
         // Get file's SHA-1 ID
@@ -292,13 +292,18 @@ public class Repository implements Serializable {
     public void find(String message) {
         // Get the list of all commits
         File[] commitList = COMMITS_DIR.listFiles();
+        boolean found = false;
         // looping through all the commits
         for (File commitFile : Objects.requireNonNull(commitList)) {
             Commit commit = Utils.readObject(commitFile, Commit.class);
             // Prints the commit id if its message match with the given message
             if (commit.message.equals(message)) {
+                found = true;
                 System.out.println(commit.id);
             }
+        }
+        if (!found) {
+            System.out.println("Found no commit with that message.");
         }
     }
 
@@ -371,16 +376,25 @@ public class Repository implements Serializable {
      * overwriting the versions of the files that are already there if they exist
      */
     public void checkoutCommit(String commitId) {
+        Commit headCommit = Commit.fromFile(HEAD);
         Commit newCommit = Commit.fromFile(commitId);
+
+        if (newCommit == null) {
+            System.out.println("No commit with that id exists.");
+            return;
+        }
         // Replace files in CWD with files in commit_files
         for (Map.Entry<String, String> entry : newCommit.fileIdMap.entrySet()) {
             File CWDFile = Utils.join(CWD, entry.getKey());
+            if (!headCommit.fileIdMap.contains(entry.getValue())) {
+                System.out.println("File does not exist in that commit.");
+                return;
+            }
             File committedFile = Utils.join(COMMIT_FILES_DIR, entry.getValue());
             Utils.copyFile(CWDFile, committedFile);
         }
 
         // Removing files that are tracked in the current commit, but not tracked in the new commit.
-        Commit headCommit = Commit.fromFile(HEAD);
         for (String fileName : headCommit.fileIdMap.keySet()) {
             if (!newCommit.fileIdMap.containsKey(fileName)) {
                 File CWDFile = Utils.join(CWD, fileName);
@@ -393,6 +407,10 @@ public class Repository implements Serializable {
     }
 
     public void checkoutBranch(String branchName) {
+        
+        if (branchName.equals(ACTIVE_BRANCH)) {
+            System.out.println("No need to checkout the current branch.");
+        }
         // The latest commit in the branch
         Branch targetBranch = Branch.getBranch(branchName);
         if (targetBranch.ref == null) {

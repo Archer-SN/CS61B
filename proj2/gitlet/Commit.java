@@ -77,7 +77,10 @@ public class Commit implements Serializable {
      */
     public static Commit fromFile(String id) {
         File commitFile = Utils.join(Repository.COMMITS_DIR, id);
-        return Utils.readObject(commitFile, Commit.class);
+        if (commitFile.exists()) {
+            return Utils.readObject(commitFile, Commit.class);
+        }
+        return null;
     }
 
     /**
