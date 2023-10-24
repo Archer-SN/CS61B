@@ -148,6 +148,7 @@ public class Repository implements Serializable {
 
         if (!file.exists()) {
             System.out.println("File does not exist.");
+            return;
         }
 
         // Get file's SHA-1 ID
@@ -245,7 +246,8 @@ public class Repository implements Serializable {
             // Remove the file from the current working directory
             file.delete();
         } else {
-            throw Utils.error("No reason to remove the file.");
+            System.out.println("No reason to remove the file.");
+            return; 
         }
     }
 
@@ -407,7 +409,7 @@ public class Repository implements Serializable {
     }
 
     public void checkoutBranch(String branchName) {
-        
+
         if (branchName.equals(ACTIVE_BRANCH)) {
             System.out.println("No need to checkout the current branch.");
         }
